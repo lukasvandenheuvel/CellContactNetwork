@@ -10,5 +10,7 @@ To run the script, follow these instructions:
 
 1. Open the Anaconda prompt.
 2. Activate the cellpose environment with ```conda activate cellpose```.
-3. Navigate to the Python folder of this repository with ```cd path/to/Python```. To move to the M-drive, press ```M:``` and enter.
+3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, press ```M:``` and enter.
 4. Run ```python FindNetworkCellpose.py```.
+
+![choose model](assets/img/choose_model.png)
