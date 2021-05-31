@@ -13,4 +13,4 @@ To run the script, follow these instructions:
 3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, press ```M:``` and enter.
 4. Run ```python FindNetworkCellpose.py```.
 
-![choose model](assets/img/choose_model.png)
+![choose model](assets/img/ChooseModel.png)
