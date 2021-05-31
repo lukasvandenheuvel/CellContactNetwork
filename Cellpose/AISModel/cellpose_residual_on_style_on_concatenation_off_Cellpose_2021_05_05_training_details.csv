@@ -1,0 +1,2 @@
+num_training_images,learning_rate,momentum,batch_size,channels,n_epochs,weight_decay
+331,0.05,0.9,4,"[1, 3]",7000,1e-05
