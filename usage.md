@@ -23,10 +23,12 @@ If you want to process a batch of images, you can choose to either store them in
 
 *Images stored in one folder*  
 Select this option if, for example, you want to segment all *channel 1* images in this folder:  
+
 ![one folder](assets/img/ImagesInOneFolder.PNG)
 
 You will be asked to select the folder containing the images, and the output folder (where you want the segmented output files to be stored).  
-If you want to process a subset of images in the folder (e.g. only the *channel 1* images), you can do so in the next dialog:
+If you want to process a subset of images in the folder (e.g. only the *channel 1* images), you can do so in the next dialog:  
+
 ![filename must include](assets/img/FileNameMustInclude.PNG)
 
 If you want to process all images in the folder, it is recommended to enter the file extension here (```.PNG``` or ```.tif```) so that the program won't try to read any storage files.  
@@ -49,7 +51,7 @@ Next, you can further specify the name of the folders where the images are store
 
 you enter ```{WWW}\CaImaging```, which represents the path to each RGB tiff image.  
 
-In the last entry you enter the name of the files. This would be ```{WWW}_fused_RGB.tif``` in the first example given above, and ```f01_SIRactin_RGB.tif``` in the second example.  
+In the last entry you enter the name of the files. This would be ```{WWW}_fused_RGB.tif``` in the first example (black screen) given above, and ```f01_SIRactin_RGB.tif``` in the second example.  
 
 **Which model do you want to use?**  
 [Cellpose](https://www.cellpose.org/) has two pre-trained models: one to detect the cell nuclei, and one to detect the cytplasm. Alternatively, you can choose to use a custom-trained model. For instructions about how to train a Cellpose model yourself, see [train Cellpose](train_cellpose.md).  
@@ -61,4 +63,12 @@ Leave checked if you want to measure cell properties (```cell-contact network```
 load('path/to/<Input_name>_network_cyto.mat')
 ```
 
-5. Choose the parameters for segmentation and network detection.
+Once you click ```Continue```, the script will read **one of** the images you selected (if you chose to process multiple images, it will read the first in the list). You can now use this image to specify the parameters.
+
+5. Choose the parameters for segmentation and network detection with the next dialog:  
+
+![choose parameters](assets/img/ChooseParameters.PNG) 
+ 
+- ```Divide fused in patches```: This box will be automatically checked if the selected image has a width of more than 1200 pixels. When checked, the script will divide the whole image in overlapping patches of size ```patch width x patch height```, which will then be segmented sequentually. After the segmentation, the patches are aligned back into a fused segmentation.
+- ```Patch width/height```: Is only used if ```Divide fused in patches``` is checked. A width/height of ```1024``` is recommended, but you can also choose ```512```.
+- ```Cytplasm color```:
