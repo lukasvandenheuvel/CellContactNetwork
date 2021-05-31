@@ -21,8 +21,8 @@ Segmenting one image (option 1) is straightforward: you will be asked to select 
 
 If you want to process a batch of images, you can choose to either store them in one folder, or store them in separate folders (one folder for each well).  
 
-*Images stored in one folder*
-Select this option if, for example, you want to segment all *channel 1* images in this folder:
+*Images stored in one folder*  
+Select this option if, for example, you want to segment all *channel 1* images in this folder:  
 ![one folder](assets/img/ImagesInOneFolder.PNG)
 
 You will be asked to select the folder containing the images, and the output folder (where you want the segmented output files to be stored).  
@@ -42,6 +42,7 @@ In the following dialog you can enter further specifications:
 ![specify well folders](assets/img/SpecifyWellFolders.PNG)
 
 You can either process a selection of wells (enter the well names seperated by commas, e.g. ```B02,B03```) or check the box ```Process all wells in root```.  
+
 Next, you can further specify the name of the folders where the images are stored. In the example above, the ```fused_RGB.tif``` images are stored in folders which have the same name as the wells themselves. In that case, enter ```{WWW}``` (the three W's stand for the well name, e.g. 'B02'). If the images are all stored in a subfolder called ```CaImaging```, like in the example below,  
 
 ![well subfolders](assets/img/ImagesInWellSubFolders.PNG)  
@@ -55,7 +56,9 @@ In the last entry you enter the name of the files. This would be ```{WWW}_fused_
 If you select the self-trained model option, you will be asked to select the file with the model parameters. The name of the file should resemble this: ```cellpose_residual_on_style_on_concatenation_off_Cellpose_2021_05_04.236206```. *Note: do not change the name of this file!*.
 
 **Do you want to do measurements?**  
-Leave checked if you want to measure cell properties (```cell-contact network```, ```area```, ```centroid coordinates```, ```orientation```, ```minor_axis_length```, ```major_axis_length```, ```eccentricity``` and ```perimeter```) and output the results in a Matlab file called ```<Input_name>_network_cyto.mat```. To read the results in a Matlab datastructure array, use the Matlab command 
-```Matlab
+Leave checked if you want to measure cell properties (```cell-contact network```, ```area```, ```centroid coordinates```, ```orientation```, ```minor_axis_length```, ```major_axis_length```, ```eccentricity``` and ```perimeter```) and output the results in a Matlab file called ```<Input_name>_network_cyto.mat```. To read the results in a Matlab datastructure array, use the Matlab command  
+```matlab
 load('path/to/<Input_name>_network_cyto.mat')
-```.
+```
+
+5. Choose the parameters for segmentation and network detection.
