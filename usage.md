@@ -1,4 +1,4 @@
-## Running Cellpose
+## Running the Cellpose-based network finder
 
 The script ```FindNetworkCellpose.py``` segments cells on a microscopy image (grayscale or RGB) using Cellpose, and finds the corresponding cellular contact network. The script takes as input a TIFF or PNG microscopy image (e.g. ```Input.tif```), and outputs 3 files:
 - ```Input_cellpose_parameters_cyto.txt``` containing the parameters of the segmentation and network detection.
