@@ -2,6 +2,8 @@
 Processing and analysis of 2D cellular contact networks.  
 This work was done at the Dimphna Meijer Lab, Faculty of Applied Sciences, Department of Bionanoscience, TU Delft. 
 
+For the documentation of this repository, see https://lukasvandenheuvel.github.io/CellContactNetwork
+
 ## Cellpose installation on Windows
 
 Follow these instructions to install [Cellpose](https://www.cellpose.org/) on your computer, together with other Packages you need for running the image processing in parallel. 
