@@ -3,7 +3,7 @@
 Follow these instructions to install [Cellpose](https://www.cellpose.org/) on your computer, together with other Packages you need for running the image processing in parallel. 
 
 1. Install an [Anaconda](https://www.anaconda.com/products/individual) distribution. Choose Windows and python 3.7.
-2. Clone or download this repository.
+2. Clone or download the [repository](https://github.com/lukasvandenheuvel/CellContactNetwork).
 3. Open the Anaconda Prompt application.
 4. Navigate to the folder where the ```environment.yml``` file is stored with ```cd path/to/folder```. To move to the M-drive, press ```M:``` and enter.
 5. Run ```conda env create -f environment.yml```.
