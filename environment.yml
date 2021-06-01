@@ -1,4 +1,4 @@
-name: cellpose2
+name: cellpose
 channels:
   - pytorch
   - anaconda
@@ -73,6 +73,7 @@ dependencies:
   - zfp=0.5.5=hd77b12b_6
   - zlib=1.2.11=h62dcd97_4
   - zstd=1.4.5=h04227a9_0
+  - pip
   - pip:
     - cachetools==4.2.2
     - cellpose==0.6.5
@@ -111,4 +112,3 @@ dependencies:
     - tqdm==4.61.0
     - typing-extensions==3.10.0.0
     - urllib3==1.26.5
-prefix: C:\Users\lukasvandenheu\Anaconda3\envs\cellpose2
