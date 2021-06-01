@@ -713,8 +713,8 @@ def choose_images_and_cellpose_model_with_gui(initial_dir):
         # Make a list of files to be included
         for file in os.listdir(root.filename):
             if include_var.get() in file:
-                path = os.path.join(root.filename, file)
-                img_list.append((path, out.filename))
+                image_path = os.path.join(root.filename, file)
+                img_list.append((image_path, out.filename))
     
     # PROCESS MULTIPLE IMAGES IN WELL FOLDERS
     if multiple_folders.get():
@@ -781,12 +781,13 @@ def choose_images_and_cellpose_model_with_gui(initial_dir):
             
             foldername = get_file_name_from_format(foldername_format_var.get(), well)
             filename = get_file_name_from_format(filename_format_var.get(), well)
-            path = os.path.join(root.filename, foldername, filename)
+            root_path = os.path.join(root.filename, foldername)
+            image_path = os.path.join(root_path, filename)
             # check if file exists
-            if os.path.isfile(path):
-                img_list.append((path, root.filename))
+            if os.path.isfile(image_path):
+                img_list.append((image_path, root_path)) # first entry is input image, second is output path
             else:
-                raise ValueError('Sorry, the file '+path+' does not exist.')
+                raise ValueError('Sorry, the file '+image_path+' does not exist.')
                 
     # MODEL TO USE ############################################################
     num_checked_boxes = np.sum([cyto_model.get(), nucleo_model.get(), self_trained.get()])

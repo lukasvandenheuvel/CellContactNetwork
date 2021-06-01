@@ -64,7 +64,7 @@ patch_nr = None
 # Choose images and parameters with TKInter GUI
 img_list,model,do_measurements = choose_images_and_cellpose_model_with_gui(initial_dir)
 
-print('>>>> READING FIRST RGB IMAGE. PLEASE BE PATIENT...')
+print('>>>> READING FIRST RGB IMAGE. THIS MAY TAKE SOME TIME...')
 fused = io.imread(img_list[0][0])
 
 [divide_in_patches, patch_width, patch_height, edge_thickness, similarity_threshold,  
@@ -112,7 +112,7 @@ for (filename,output_path) in img_list:
     file_name = os.path.split(filename)[1].split('.')[0]
     
     # Save metadata file
-    metadata_file = file_name + '_cellpose_parameters_'+model_name+'.tif'
+    metadata_file = file_name + '_cellpose_parameters_'+model_name+'.txt'
     metadata_file_path = os.path.join(directory, metadata_file)
     saved = save_metadata_file(metadata_file_path, parameters_as_string)
     print('>>>> SAVED METADATA FILE IN ' + directory + '.')
@@ -153,12 +153,13 @@ for (filename,output_path) in img_list:
     output_seg = file_name + '_cellpose_segmentation_'+model_name+'.tif'
     segmentation_output_path = os.path.join(output_path, output_seg)
     io.imsave(segmentation_output_path, segmented)
+    print('>>>> Segmentation is saved succesfully as ' + segmentation_output_path)
     
     if do_measurements:
         output_netw = file_name + '_network_'+model_name+'.mat'
         network_output_path = os.path.join(output_path, output_netw)
         savemat(network_output_path, mdic)  
-        print('Graph is saved succesfully as .mat file.')
+        print('>>>> Network is saved succesfully as ' + network_output_path)
         print('\n\n')
     
     ii = ii + 1
