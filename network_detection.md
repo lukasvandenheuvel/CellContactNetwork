@@ -9,9 +9,12 @@ If the input image is large, you can choose to do the segmentation on smaller pa
 
 To run the script, follow these instructions:
 
-1. Open the Anaconda prompt.
-2. Activate the cellpose environment with ```conda activate cellpose```.
-3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.
+1. Open the Anaconda prompt.  
+--------------------------------------------
+2. Activate the cellpose environment with ```conda activate cellpose```.  
+--------------------------------------------
+3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.   
+--------------------------------------------
 4. Run ```python FindNetworkCellpose.py```. After a short while, you will be asked the following three questions:  
 
 ![choose model](assets/img/ChooseModel.PNG)  
@@ -70,6 +73,7 @@ If you select the self-trained model option, you will be asked to select the fil
 Leave this box checked if you want to measure cell properties (```cell-contact network```, ```area```, ```centroid coordinates```, ```orientation```, ```minor_axis_length```, ```major_axis_length```, ```eccentricity``` and ```perimeter```) and output the results in a Matlab file called ```<Input_name>_network_cyto.mat```.  
 
 Once you click ```Continue```, the script will read **one of** the images you selected (if you chose to process multiple images, it will read the first in the list). You can now use this image to specify the parameters.  
+--------------------------------------------  
 
 5. Choose the parameters for segmentation and network detection with the next dialog:  
 
@@ -88,7 +92,11 @@ Once you click ```Continue```, the script will read **one of** the images you se
 
 If you are satisfied with the parameter settings (press ```Preview``` to check), **close the Preview window on the right** (you might need to press the close button several times, this is normal). Then, press the green ```Continue``` button. Depending on the size of the image, the segmentation may take several seconds (for an image with 1024 x 1024 pixels) or up to one hour (for a fused image taken with 20x magnification). You can see the progress in the Anaconda prompt. 
 
+--------------------------------------------
+
 6. When the segmentation is done, you can read the measurement results in a Matlab datastructure array using the Matlab command  
 ```matlab
 load('path/to/<Input_name>_network_cyto.mat')
 ```
+
+--------------------------------------------
