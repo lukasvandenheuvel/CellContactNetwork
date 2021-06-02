@@ -50,7 +50,7 @@ You can either process a selection of wells (enter the well names seperated by c
 
 Next, you can further specify the name of the folders where the images are stored, and the filenames themselves. Below are two examples of how to do this:  
 
-*Example 1* 
+*Example 1*  
 ![well folders](assets/img/ImagesInWellFolders.PNG)  
 Here, the ```<well>_fused_RGB.tif``` images are stored in folders which have the same name as the wells themselves. In that case, enter ```{WWW}``` as folder name format (the three W's stand for the well name, e.g. 'B02'), and ```{WWW}_fused_RGB.tif``` as filename format.  
 
