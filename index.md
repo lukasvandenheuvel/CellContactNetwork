@@ -5,6 +5,7 @@ This work was done at the Dimphna Meijer Lab, Faculty of Applied Sciences, Depar
 ## [Installation](installation.md)
 ## [Stitch High-Content Images](stitching.md)
 ## [Detect Multicellular Networks](network_detection.md)
+## [Train a Cellpose Model](train_cellpose.md)
 
 <!---
 ### Markdown
