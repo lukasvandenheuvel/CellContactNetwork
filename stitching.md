@@ -60,26 +60,23 @@ MIST is a stitching tool based on Fourier-based translation. For information and
 I highly recommend trying out the plugin yourself, before using the macros described above (You can find it in Fiji: ```Plugins > Stitching > MIST```).
 The important parameters to change are under the tabs “Input” and “Advanced”. Below, I highlighted three of them.  
 
-```Timeslices:``` the channel(s) you wish to stitch. Note that MIST can only calculate 2D overlaps, so when you run MIST for the first time on this image, you can only enter one number here. Once you have calculated the overlaps in one channel (say, channel 1), you can stitch the remaining channels based on the image coordinates  of channel 1.  
-
+- ```Timeslices:``` the channel(s) you wish to stitch. Note that MIST can only calculate 2D overlaps, so when you run MIST for the first time on this image, you can only enter one number here. Once you have calculated the overlaps in one channel (say, channel 1), you can stitch the remaining channels based on the image coordinates  of channel 1.  
 Example: you have 4 channels (ch 0-3), and you wish to calculate the overlaps based on channel 1. The other channels will then be stitched based on the coordinates of channel 1. You now need to run the MIST plugin twice:  
-
 First run: 
--	Timeslices = 1
--	Leave the “Assemble from metadata” check button unchecked.  
-
+  -	Timeslices = 1
+  -	Leave the “Assemble from metadata” check button unchecked.  
 Copy the outputted file ```img-global-positions-1.txt``` once for each channel, to get 
-```img-global-positions-0.txt```, ```img-global-positions-2.txt```, and ```img-global-positions-3.txt```.
+```img-global-positions-0.txt```, ```img-global-positions-2.txt```, and ```img-global-positions-3.txt```.  
 
-Second run: 
--	Timeslices = 0,2,3
--	Check “Assemble from metadata”.
--	Global Positions File: ```path/to/positions/files/img-global-positions-{t}.txt```
+  Second run:  
+  -	Timeslices = 0,2,3
+  -	Check “Assemble from metadata”.
+  -	Global Positions File: ```path/to/positions/files/img-global-positions-{t}.txt```
 The macro ```2_stitchMIST.ijm``` will do these steps automatically for you.  
 
-```Horizontal / Vertical overlap``` (under “Advanced”): Estimation of the overlap % between the tiles. I recommend 3%, but varying this number will significantly change the stitching result..  
+- ```Horizontal / Vertical overlap``` (under “Advanced”): Estimation of the overlap % between the tiles. I recommend 3%, but varying this number will significantly change the stitching result..  
 
-```Overlap uncertainty``` (under “Advanced”): This number should be strictly smaller than the Horizontal/Vertical overlap, otherwise you’ll get “gaps” in the stitched image.
+- ```Overlap uncertainty``` (under “Advanced”): This number should be strictly smaller than the Horizontal/Vertical overlap, otherwise you’ll get “gaps” in the stitched image.
 
 ![MIST dialog](./assets/img/MISTdialog.png)  
 
