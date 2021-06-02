@@ -19,12 +19,12 @@ To run the script, follow these instructions:
 ## 1. How many images do you want to process? 
 Here, you are asked to indicate how many images you want to process, and how they are stored. 
 
-**Only one**  
+### Only one
 Select this option if you want to segment one file only (now matter how large it is). You will then be asked to select one TIFF or PNG image. The output files will be stored in the same folder as the input file.  
 
 If you want to process a batch of files, you can choose to either store them in one folder, or store them in separate folders (one folder for each well).  
 
-**Multiple in one folder**  
+### Multiple in one folder
 Select this option if, for example, you want to segment all *ch1* images in this folder:  
 
 ![one folder](assets/img/ImagesInOneFolder.PNG)
@@ -37,7 +37,7 @@ If you want to process a subset of images in the folder (e.g. only the *channel 
 
 If you want to process all images in the folder, it is recommended to enter the file extension here (```.PNG``` or ```.tif```) so that the program won't try to read any storage files.  
 
-**Multiple in seperate well folders**  
+### Multiple in seperate well folders
 You can use this last option if you, for example, want to segment fused images of wells that are stored in individual well folders:  
 
 ![well folders](assets/img/ImagesInWellFolders.PNG)  
