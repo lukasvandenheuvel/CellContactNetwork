@@ -19,7 +19,7 @@ To run the script, follow these instructions:
 ## 1. How many images do you want to process? 
 Here, you are asked to indicate how many images you want to process, and how they are stored. 
 
-**Only one**
+**Only one**  
 Select this option if you want to segment one file only (now matter how large it is). You will then be asked to select one TIFF or PNG image. The output files will be stored in the same folder as the input file.  
 
 If you want to process a batch of files, you can choose to either store them in one folder, or store them in separate folders (one folder for each well).  
