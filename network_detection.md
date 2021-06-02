@@ -10,12 +10,19 @@ If the input image is large, you can choose to do the segmentation on smaller pa
 To run the script, follow these instructions:
 
 --------------------------------------------  
+
 1. Open the Anaconda prompt.  
---------------------------------------------
+
+--------------------------------------------  
+
 2. Activate the cellpose environment with ```conda activate cellpose```.  
---------------------------------------------
-3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.   
---------------------------------------------
+
+--------------------------------------------  
+
+3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.  
+
+--------------------------------------------  
+
 4. Run ```python FindNetworkCellpose.py```. After a short while, you will be asked the following three questions:  
 
 ![choose model](assets/img/ChooseModel.PNG)  
