@@ -30,6 +30,7 @@ Select this option if, for example, you want to segment all *ch1* images in this
 ![one folder](assets/img/ImagesInOneFolder.PNG)
 
 You will be asked to select the folder containing the images, and the output folder (where you want the segmented output files to be stored).  
+
 If you want to process a subset of images in the folder (e.g. only the *channel 1* images), you can do so in the next dialog:  
 
 ![filename must include](assets/img/FileNameMustInclude.PNG)
