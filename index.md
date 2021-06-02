@@ -3,8 +3,8 @@ Processing and analysis of 2D cellular contact networks.
 This work was done at the Dimphna Meijer Lab, Faculty of Applied Sciences, Department of Bionanoscience, TU Delft.  
 
 ## [Installation](installation.md)
-## [Stitch High-Content images](stitching.md)
-## [Detect multicellular networks](network_detection.md)
+## [Stitch High-Content Images](stitching.md)
+## [Detect Multicellular Networks](network_detection.md)
 
 <!---
 ### Markdown
