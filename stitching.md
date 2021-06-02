@@ -57,7 +57,7 @@ Once you click OK, the stitching will start. You can see the progress in the LOG
 
 MIST is a stitching tool based on Fourier-based translation. For information and publications, see [here](https://pages.nist.gov/MIST/).  
 
-I highly recommend trying out the plugin yourself, before using the macro (see below. You can find it in Fiji: ```Plugins > Stitching > MIST```.
+I highly recommend trying out the plugin yourself, before using the macros described above (You can find it in Fiji: ```Plugins > Stitching > MIST```).
 The important parameters to change are under the tabs “Input” and “Advanced”. Below, I highlighted three of them.  
 
 ```Timeslices:``` the channel(s) you wish to stitch. Note that MIST can only calculate 2D overlaps, so when you run MIST for the first time on this image, you can only enter one number here. Once you have calculated the overlaps in one channel (say, channel 1), you can stitch the remaining channels based on the image coordinates  of channel 1.  
