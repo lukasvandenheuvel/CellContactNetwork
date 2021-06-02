@@ -74,6 +74,7 @@ If you select the self-trained model option, you will be asked to select the fil
 Leave this box checked if you want to measure cell properties (```cell-contact network```, ```area```, ```centroid coordinates```, ```orientation```, ```minor_axis_length```, ```major_axis_length```, ```eccentricity``` and ```perimeter```) and output the results in a Matlab file called ```<Input_name>_network_cyto.mat```.  
 
 Once you click ```Continue```, the script will read **one of** the images you selected (if you chose to process multiple images, it will read the first in the list). You can now use this image to specify the parameters.  
+
 --------------------------------------------  
 
 5. Choose the parameters for segmentation and network detection with the next dialog:  
