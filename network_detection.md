@@ -59,7 +59,9 @@ Here, the ```<well>_fused_RGB.tif``` images are stored in folders which have the
 Here, the images are all stored in a subfolder called ```CaImaging```. Now you enter ```{WWW}\CaImaging``` as folder name format, which represents the path to each RGB tiff image. The filename format is now ```f01_SIRactin_RGB.tif``` (note that all filenames are the same).  
 
 ## 2. Which model do you want to use?
-[Cellpose](https://www.cellpose.org/) has two pre-trained models: one to detect the cell nuclei, and one to detect the cytplasm. Alternatively, you can choose to use a custom-trained model. For instructions about how to train a Cellpose model yourself, see [train Cellpose](train_cellpose.md).  
+[Cellpose](https://www.cellpose.org/) has two pre-trained models: one to detect the cell nuclei, and one to detect the cytplasm. Alternatively, you can choose to use a custom-trained model. There is [a custom-trained model in the Github repository](https://github.com/lukasvandenheuvel/CellContactNetwork/tree/main/Cellpose/AISModel) to segment the soma and axon initial segment of neurons fluorescently stained with Ankyrin G.  
+
+For instructions about how to train a Cellpose model yourself, see [train Cellpose](train_cellpose.md).  
 
 If you select the self-trained model option, you will be asked to select the file with the model parameters. The name of the file should resemble this: ```cellpose_residual_on_style_on_concatenation_off_Cellpose_2021_05_04.236206```.  
 *Note: do not change the name of this file!*.  
