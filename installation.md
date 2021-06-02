@@ -23,6 +23,6 @@ Follow these instructions to install [Cellpose](https://www.cellpose.org/) on yo
 5. Run ```conda env create -f environment.yml```.
 6. When all packages are installed, activate the environment with ```conda activate cellpose```.
 7. You should see (```cellpose```) on the left side of the terminal line.
-8. Run ```python -m cellpose``` to start up the Cellpose GUI. If it works, you're all set and you can start [detecting multicellular networks](network_decection.md).
+8. Run ```python -m cellpose``` to start up the Cellpose GUI. If it works, you're all set and you can start [detecting multicellular networks](network_detection.md).
 
 NOTE: if you are working on a Dimphna Meijer lab computer, and the above installation did not work for you (for whatever reason), there is the possibility to use a pre-installed environment on the TU Delft M-drive. *Keep in mind that using it is not recommended, because Python scripts will run significantly slower.* If you have no choice, you can activate this environment with ```conda activate M:\tnw\bn\dm\Shared\cellpose```.
