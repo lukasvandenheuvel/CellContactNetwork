@@ -1,4 +1,4 @@
-## Detect Multicellular Networks
+# Detect Multicellular Networks
 
 The script ```FindNetworkCellpose.py``` segments cells on a microscopy image (grayscale or RGB) using Cellpose, and finds the corresponding cellular contact network. The script takes as input a TIFF or PNG microscopy image (e.g. ```Input.tif```), and outputs 3 files:
 - ```Input_cellpose_parameters_cyto.txt``` containing the parameters of the segmentation and network detection.
@@ -16,7 +16,7 @@ To run the script, follow these instructions:
 
 ![choose model](assets/img/ChooseModel.PNG)  
 
-# 1. How many images do you want to process? 
+## 1. How many images do you want to process? 
 Here, you are asked to indicate how many images you want to process, and how they are stored. 
 
 **Only one**
@@ -59,13 +59,13 @@ Here, the images are all stored in a subfolder called ```CaImaging```, like in t
 
 Now you enter ```{WWW}\CaImaging``` as folder name format, which represents the path to each RGB tiff image. The filename format is now ```f01_SIRactin_RGB.tif``` (note that all filenames are the same).  
 
-**Which model do you want to use?**  
+# 2. Which model do you want to use?
 [Cellpose](https://www.cellpose.org/) has two pre-trained models: one to detect the cell nuclei, and one to detect the cytplasm. Alternatively, you can choose to use a custom-trained model. For instructions about how to train a Cellpose model yourself, see [train Cellpose](train_cellpose.md).  
 
 If you select the self-trained model option, you will be asked to select the file with the model parameters. The name of the file should resemble this: ```cellpose_residual_on_style_on_concatenation_off_Cellpose_2021_05_04.236206```.  
 *Note: do not change the name of this file!*.  
 
-**Do you want to do measurements?**  
+# 3. Do you want to do measurements?  
 Leave this box checked if you want to measure cell properties (```cell-contact network```, ```area```, ```centroid coordinates```, ```orientation```, ```minor_axis_length```, ```major_axis_length```, ```eccentricity``` and ```perimeter```) and output the results in a Matlab file called ```<Input_name>_network_cyto.mat```.  
 
 Once you click ```Continue```, the script will read **one of** the images you selected (if you chose to process multiple images, it will read the first in the list). You can now use this image to specify the parameters.  
