@@ -5,7 +5,7 @@ The script ```FindNetworkCellpose.py``` segments cells on a microscopy image (gr
 - ```Input_cellpose_segmentation_cyto.tif```, the segmented 32-bit image where each cell is labeled with a seperate grayscale value.
 - ```Input_network_cyto.mat```, containing the extracted network and other cell measurements (e.g. positions of the centers of mass, the area, circularity, etc.). You can also choose to omit this last file from the output.  
 
-If the input image is large, you can choose to do the segmentation in smaller patches.
+If the input image is large, you can choose to do the segmentation on smaller patches, and then align the patches back into a large segmentation.
 
 To run the script, follow these instructions:
 
