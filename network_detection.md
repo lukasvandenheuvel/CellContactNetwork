@@ -11,19 +11,19 @@ To run the script, follow these instructions:
 
 ---  
 
-1. Open the Anaconda prompt.
+Open the Anaconda prompt.
 
 ---  
 
-2. Activate the cellpose environment with ```conda activate cellpose```.
+Activate the cellpose environment with ```conda activate cellpose```.
 
 ---  
 
-3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.
+Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.
 
 ---  
 
-4. Run ```python FindNetworkCellpose.py```. After a short while, you will be asked the following three questions:  
+Run ```python FindNetworkCellpose.py```. After a short while, you will be asked the following three questions:  
 
 ![choose model](assets/img/ChooseModel.PNG)  
 
@@ -84,7 +84,7 @@ Once you click ```Continue```, the script will read **one of** the images you se
 
 ---  
 
-5. Choose the parameters for segmentation and network detection with the next dialog:
+Choose the parameters for segmentation and network detection with the next dialog:
 
 ![choose parameters](assets/img/ChooseParameters.PNG) 
  
@@ -103,7 +103,7 @@ If you are satisfied with the parameter settings (press ```Preview``` to check),
 
 ---
 
-6. When the segmentation is done, you can read the measurement results in a Matlab datastructure array using the Matlab command  
+When the segmentation is done, you can read the measurement results in a Matlab datastructure array using the Matlab command  
 ```matlab
 load('path/to/<Input_name>_network_cyto.mat')
 ```
