@@ -11,15 +11,15 @@ To run the script, follow these instructions:
 
 ---  
 
-1. Open the Anaconda prompt.  
+1. Open the Anaconda prompt.
 
 ---  
 
-2. Activate the cellpose environment with ```conda activate cellpose```.  
+2. Activate the cellpose environment with ```conda activate cellpose```.
 
 ---  
 
-3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.  
+3. Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.
 
 ---  
 
@@ -84,7 +84,7 @@ Once you click ```Continue```, the script will read **one of** the images you se
 
 ---  
 
-5. Choose the parameters for segmentation and network detection with the next dialog:  
+5. Choose the parameters for segmentation and network detection with the next dialog:
 
 ![choose parameters](assets/img/ChooseParameters.PNG) 
  
