@@ -50,15 +50,13 @@ You can either process a selection of wells (enter the well names seperated by c
 
 Next, you can further specify the name of the folders where the images are stored, and the filenames themselves. Below are two examples of how to do this:  
 
-*Example 1*  
-This example is shown on the black screen above, where the ```<well>_fused_RGB.tif``` images are stored in folders which have the same name as the wells themselves. In that case, enter ```{WWW}``` as folder name format (the three W's stand for the well name, e.g. 'B02'), and ```{WWW}_fused_RGB.tif``` as filename format.  
+*Example 1* 
+![well folders](assets/img/ImagesInWellFolders.PNG)  
+Here, the ```<well>_fused_RGB.tif``` images are stored in folders which have the same name as the wells themselves. In that case, enter ```{WWW}``` as folder name format (the three W's stand for the well name, e.g. 'B02'), and ```{WWW}_fused_RGB.tif``` as filename format.  
 
 *Example 2*  
-Here, the images are all stored in a subfolder called ```CaImaging```, like in the example below.
-
-![well subfolders](assets/img/ImagesInWellSubFolders.PNG)  
-
-Now you enter ```{WWW}\CaImaging``` as folder name format, which represents the path to each RGB tiff image. The filename format is now ```f01_SIRactin_RGB.tif``` (note that all filenames are the same).  
+![well subfolders](assets/img/ImagesInWellSubFolders.PNG)   
+Here, the images are all stored in a subfolder called ```CaImaging```. Now you enter ```{WWW}\CaImaging``` as folder name format, which represents the path to each RGB tiff image. The filename format is now ```f01_SIRactin_RGB.tif``` (note that all filenames are the same).  
 
 # 2. Which model do you want to use?
 [Cellpose](https://www.cellpose.org/) has two pre-trained models: one to detect the cell nuclei, and one to detect the cytplasm. Alternatively, you can choose to use a custom-trained model. For instructions about how to train a Cellpose model yourself, see [train Cellpose](train_cellpose.md).  
