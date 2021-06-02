@@ -2,9 +2,9 @@
 Processing and analysis of 2D cellular contact networks.  
 This work was done at the Dimphna Meijer Lab, Faculty of Applied Sciences, Department of Bionanoscience, TU Delft.  
 
-## [Cellpose Installation](installation.md)
-## [Use Cellpose](usage.md)
-## [Developer documentation (TODO)]()
+## [Installation](installation.md)
+## [Stitching of High-Content images](stitching.md)
+## [Detect multicellular networks](network_detection.md)
 
 <!---
 ### Markdown
