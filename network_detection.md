@@ -8,7 +8,7 @@ The script ```FindNetworkCellpose.py``` segments cells on a microscopy image (gr
 If the input image is large, you can choose to do the segmentation on smaller patches, and then align the patches back into a large segmentation.
 
 To run the script, follow these instructions:
-
+--------------------------------------------  
 1. Open the Anaconda prompt.  
 --------------------------------------------
 2. Activate the cellpose environment with ```conda activate cellpose```.  
