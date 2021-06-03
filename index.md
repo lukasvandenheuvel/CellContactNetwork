@@ -1,11 +1,20 @@
-# Cell Contact Network
+# Cell Contact Networks
 Processing and analysis of 2D cellular contact networks.  
-This work was done at the Dimphna Meijer Lab, Faculty of Applied Sciences, Department of Bionanoscience, TU Delft.  
+This work was done at the Dimphna Meijer Lab of Quantitative Neurobiology, Faculty of Applied Sciences, Department of Bionanoscience, TU Delft.  
 
-## [Installation](installation.md)
-## [Stitch High-Content Images](stitching.md)
-## [Detect Multicellular Networks](network_detection.md)
-## [Train a Cellpose Model](train_cellpose.md)
+![Workflow](./assets/img/Workflow.png)  
+
+---
+[Installation](installation.md)
+---
+[Stitching](stitching.md)
+---
+[Cellpose Segmentation and Network Detection](network_detection.md)
+---
+[Network Analysis](network_analysis.md)
+---
+[Train a Cellpose Model](train_cellpose.md)
+---
 
 <!---
 ### Markdown
