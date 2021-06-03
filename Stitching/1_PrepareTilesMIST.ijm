@@ -407,6 +407,26 @@ function get_true_indeces_as_string(boolean_list){
 	return boolean_list_str;
 }
 
+function find_channels_in_mfgtmp_folder(file_list){
+	//------------------------------------------------------
+	// This function finds which channels are present in a
+	// list of input tiles.
+	// Example: if MFGTMP_201125130001_B03f00d0.tif and MFGTMP_201125130001_B03f00d1.tif are present
+	// in file_list, then channels_present = [0,1]
+	//------------------------------------------------------
+	channels_present = newArray(0);
+	for (i = 0; i < file_list.length; i++) {
+		file = file_list[i];
+		if (indexOf(file, "MFGTMP") == 0){
+			split_file = split(file, "d");
+			split_file = split(split_file[1], ".");
+			ch_nr = parseInt( split_file[0] );
+			channels_present = Array.concat(channels_present,ch_nr);
+		}
+	}
+	return channels_present;
+}
+
 //---------------------------END FUNCTIONS-----------------------------
 
 //---------------------------START SCRIPT------------------------------
