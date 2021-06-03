@@ -4,27 +4,17 @@ This work was done at the Dimphna Meijer Lab of Quantitative Neurobiology, Facul
 
 ![Workflow](./assets/img/Workflow.png)  
 
----
+***
 
-## [Installation](installation.md)
+## [Installation](installation.md)  
 
----
+## [Stitching](stitching.md)  
 
-## [Stitching](stitching.md)
+## [Cellpose Segmentation and Network Detection](network_detection.md)  
 
----
+## [Network Analysis](network_analysis.md)  
 
-## [Cellpose Segmentation and Network Detection](network_detection.md)
-
----
-
-## [Network Analysis](network_analysis.md)
-
----
-
-## [Train a Cellpose Model](train_cellpose.md)
-
----
+## [Train a Cellpose Model](train_cellpose.md)  
 
 <!---
 ### Markdown
