@@ -21,8 +21,34 @@ import os
 from cellpose import models
 use_GPU = models.use_gpu()
 
+
 #%%
 def transformer(img, label):
+    '''
+    This function does data augmentation on an image and its corresponding label.
+    The operations done are (in chronological order):
+        - Horizontal flip (with a probability of 50%)
+        - Vertical flip (with a probability of 50%)
+        - Affine transform: rotation, translation, cropping, scaling and shear.
+        - Gaussian blur on img only (with a probability of 50%)
+        - Add Gaussian noise on img only (with a probability of 50%).
+    
+    Parameters
+    ----------
+    img : PIL image (RGB)
+        Input RGB image.
+    label : PIL image (grayscale)
+        Corresponding label.
+
+    Returns
+    -------
+    transformed_img : numpy array
+        Transformed RGB image with the same dimensions as img.
+    transformed_label : numpy array
+        Transformed label with the same dimensions as label.
+
+    '''
+    
     # image and mask are PIL image object. 
     img_w, img_h = img.size
     num_channels = len(img.getbands())
@@ -99,7 +125,11 @@ def load_train_data(train_path, label_path):
 
 #%%
 def augment_data(train_set, nr_augmentations_per_image):
-    
+    '''
+    This function does data augmentation on every (img,label) pair in train_set.
+    For each image, it does nr_augmentations_per_image transformations and it 
+    appends these transformations to the train set.
+    '''
     augmented_data = []
     train_set_numpy = []
     for img,mask in train_set:
@@ -140,7 +170,59 @@ def load_test_data(path_to_data):
     return test_data,test_data_filenames
 
 #%%
+def find_channels(model, cyto_ch, nucleo_ch):
+    '''
+    This function converts channel colors e.g. 'gray', 'R', 'G', 'B' to a list
+    called channels. The first entry in the list is the cytoplasm channel,
+    the second is the nucleus channel.
+    Example:
+    channels=[2,3] if you have cyto_ch='G' and nucleo_ch='B'.
+    
+    INPUTS
+    ------
+        model (str)
+        Can be 'cyto' to use Cellpose pre-trained cyto model, 'nuclei' to use 
+        Cellpose pre-trained nucleus model, or any other name for a custom-trained model. 
+        
+        cyto_ch_str (str)
+        Indicates the color of the cytoplasm. Can be 'gray', 'R', 'G', 'B' or 'None'.
+        
+        nucleo_ch_str (str)
+        Indicates the color of the cytoplasm. Can be 'gray', 'R', 'G', 'B' or 'None'.
+    
+    OUTPUT
+    ------
+        channels (list of 2 integers)
+        First channel is cyto, second is nucleus. Example:
+        channels=[2,3] if you have G=cytoplasm and B=nucleus 
+        
+    '''
+    # Check if cyto and nucleo colors are entered correctly
+    options = ['gray', 'R', 'G', 'B', 'None']
+    if not(cyto_ch in options) or not(nucleo_ch in options):
+        raise ValueError("You entered an invalid color for the nucleus or cytoplasm channel. Choose from 'gray', 'R', 'G', 'B' or 'None'.")
+    
+    # Convert cyto and nucleo colors to a list with 2 channels (first channel is 
+    # for cytoplasm, second channel for nuclei).
+    cyto_channel = options.index(cyto_ch)
+    cyto_channel = (0 if cyto_channel==4 else cyto_channel) # if cyto_ch_str was 'None', set cyto_channel to 0.
+    nucleo_channel = options.index(nucleo_ch)
+    nucleo_channel = (0 if nucleo_channel==4 else nucleo_channel) # if nucleo_ch_str was 'None', set nucle0_channel to 0.
+    channels = [cyto_channel, nucleo_channel]
+    
+    # If we use the nucleus model, the first channel should be the nucleus channel
+    # and the second channel should be 0
+    # (the cyto channel should not be used in that case)
+    if model=='nuclei':
+        print('Using the nuclei model.')
+        channels = [nucleo_channel,0]
+    
+    return channels
+#%%
 def save_masks(output_path, mask_list, flow_list, test_data_filenames):
+    '''
+    Save masks and flow predictions made by cellpose in output_path.
+    '''
     for mask, flow, path_to_test_img in zip(mask_list, flow_list, test_data_filenames):
         nr = path_to_test_img.split('.')[0]
         io.imsave( os.path.join(output_path, nr+'_predict.tif'), mask )
@@ -150,46 +232,59 @@ def save_masks(output_path, mask_list, flow_list, test_data_filenames):
             
     return True
             
-#%% Init
+#%% ------------------------------ START CODE ---------------------------------
+
+# Specify training parameters -------------------------------------------------
 learning_rate = 0.05
 momentum = 0.9
-channels = [1,3]
+channel_to_segment = 'R' # choose 'R', 'G', or 'B'.
+nucleus_channel = 'B'    # choose 'R', 'G', or 'B' or 'None'
 batch_size = 4
-n_epochs = 7000
+n_epochs = 2
 weight_decay = 0.00001
 num_augmentations_per_image = 2
 
-path_to_models = r'M:\tnw\bn\dm\Shared\Lukas\NetworkAnalysis\CellContactNetwork\Cellpose\models'
-pretrained_model_name = 'cellpose_residual_on_style_on_concatenation_off_models_2021_04_21_08_59_47.100849'
+# Specifications of the pretrained model --------------------------------------
+path_to_pretrained_model = None # Path to the pretrained model file (example: './models/cellpose_residual_on_style_on_concatenation_off_Cellpose_2021_05_04.236206'). Set to None if you want to train from scratch.
 
-train_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\train\ais\image'
-label_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\train\ais\label'
-specialised_train_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\train\glioma\image'
-specialised_label_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\train\glioma\label'
-test_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\test\image'
-prediction_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\test\predictions'
-save_path = r'M:\tnw\bn\dm\Shared\Lukas\NetworkAnalysis\CellContactNetwork\Cellpose\models'
+# Path to images and annotations ----------------------------------------------
+train_path = './data/train/ais/image'
+label_path = './data/train/ais/label'
 
-#%% Load model with pretrained weights
-path_to_pretrained_model = os.path.join(path_to_models, pretrained_model_name)
-path_to_pretrained_model = None
+# Path to specialized dataset -------------------------------------------------
+specialised_train_path = './data/train/neuroblastoma/image' # Set to None if you don't want to use a specialized dataset
+specialised_label_path = './data/train/neuroblastoma/label' # Set to None if you don't want to use a specialized dataset
+
+# Path to test images ---------------------------------------------------------
+test_path = './data/test/image'              # Set to None if you don't have test images
+
+# Output path -----------------------------------------------------------------
+prediction_path = './data/test/image'        # where the predicted test images will be saved (only used if test_path is not None)
+save_path = './'                             # where the model parameters will be saved
+
+#%% Load model with pretrained weights ---------------------------------------
 model = models.CellposeModel(gpu=use_GPU, pretrained_model=path_to_pretrained_model)
 
-#%% Load train and test dataset 
+#%% Load train and test dataset -----------------------------------------------
+print('>>>> Loading and augmenting data...')
 pre_train_set = load_train_data(train_path,label_path)
 aug_train_set = augment_data(pre_train_set, num_augmentations_per_image)
-spec_train_set = load_train_data(specialised_train_path,specialised_label_path)
-spec_train_set = pil_to_numpy(spec_train_set)
 
-train_set = aug_train_set + spec_train_set
+spec_train_set = [] 
+if not(specialised_train_path==None):
+    print('>>>> Loading specialized dataset...')
+    spec_train_set = load_train_data(specialised_train_path,specialised_label_path)
+    spec_train_set = pil_to_numpy(spec_train_set)
+    
+train_set = aug_train_set + spec_train_set # combine augmented dataset and specialized dataset
 random.shuffle(train_set)
 train_images,train_labels = list(zip(*train_set))
 
 num_training_images = len(train_images)
-print("Loaded {} training images".format(num_training_images))
+print(">>>> Loaded {} training images".format(num_training_images))
 test_data,test_data_filenames = load_test_data(test_path)
 
-#%% Show 5 images
+#%% Show 5 train images ------------------------------------------------------
 
 f, ax = plt.subplots(2, 5, figsize=(12, 8))
 for i in range(5):
@@ -198,22 +293,25 @@ for i in range(5):
     label = train_labels[nr]
     ax[0,i].imshow(img)
     ax[1,i].imshow(label)
+f.show()
 
-
-#%% Train model
+#%% Train model ---------------------------------------------------------------
+channels = find_channels('custom', channel_to_segment, nucleus_channel)
 model_path = model.train(list(train_images), list(train_labels), test_data=None, channels=channels, save_path=save_path, learning_rate=learning_rate, n_epochs=n_epochs,  momentum=momentum, weight_decay=weight_decay, batch_size=batch_size)
 
-#%% Save parameters file
-model_name = model_path.split('/')[1]
+#%% Save parameters file ------------------------------------------------------
+model_name = model_path.split('/')[-1]
 model_name_without_extension = model_name.split('.')[0]
 params_csv_file = model_name_without_extension +  '.csv'
-path_to_params = os.path.join( model_path.split('/')[0], params_csv_file)
+path_to_params = os.path.join( '/'.join(model_path.split('/')[0:-1]), params_csv_file)
 
 params = [num_training_images, learning_rate, momentum, batch_size, channels, n_epochs, weight_decay]
 param_names = ['num_training_images', 'learning_rate', 'momentum', 'batch_size', 'channels', 'n_epochs', 'weight_decay']
 pd_params = pd.DataFrame([params], columns=param_names)
 save = pd_params.to_csv(path_to_params, index=None)
 
-#%% Evaluate model
-mask_list, flow_list, styles = model.eval(test_data, channels = [1,3])
-saved = save_masks(prediction_path, mask_list, flow_list, test_data_filenames)
+#%% Evaluate model -----------------------------------------------------------
+if not(test_path==None):
+    mask_list, flow_list, styles = model.eval(test_data, channels = [1,3])
+    saved = save_masks(prediction_path, mask_list, flow_list, test_data_filenames)
+    print('>>>> Predictions saved successfully in ' + prediction_path)

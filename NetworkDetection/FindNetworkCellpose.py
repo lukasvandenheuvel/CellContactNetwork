@@ -20,7 +20,6 @@ from segment_cellpose_helpers import find_network,cellpose_segment,segment_fused
 from cellpose import models
 use_GPU = models.use_gpu()
 print('>>>> GPU activated? %d'%use_GPU)
-    
 
 #%%
 def save_metadata_file(metadata_file_path, metadata):
