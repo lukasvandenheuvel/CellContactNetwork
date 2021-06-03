@@ -4,6 +4,8 @@ This work was done at the Dimphna Meijer Lab, Faculty of Applied Sciences, Depar
 
 For the documentation of this repository, see https://lukasvandenheuvel.github.io/CellContactNetwork
 
+![Workflow](Workflow.png)
+
 ## Cellpose installation on Windows
 
 Follow these instructions to install [Cellpose](https://www.cellpose.org/) on your computer, together with other Packages you need for running the image processing in parallel. 
