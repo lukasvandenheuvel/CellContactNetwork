@@ -144,7 +144,8 @@ function get_true_indeces_as_string(boolean_list){
 #@ File (label="Path to Fiji.app", style="directory") fiji_path
 #@ File (label="Root folder", style="directory") root
 #@ String (label="Well you want to stitch") well
-#@ int (label="Width/height of fused image") w
+#@ int (label="Width of fused image (in number of tiles)") w
+#@ int (label="Height of fused image (in number of tiles)") h
 
 close("*");
 setBatchMode(true);
@@ -161,11 +162,11 @@ if (!File.isDirectory(tile_folder)){
 	exit("Sorry, No tile folder could be found in "+well_folder+".\nPlease check the root folder you entered.");
 }
 file_list = getFileList(tile_folder);
-if (!check_if_tile_nr_is_present(w*w-1,file_list)){
-	exit("Sorry, the chosen width/height of "+d2s(w,0)+" cannot be correct. \nThere are less than "+d2s(w*w,0)+" images in the input folder of well "+well+".");
+if (!check_if_tile_nr_is_present(w*h-1,file_list)){
+	exit("Sorry, the chosen width ("+d2s(w,0)+") or height ("+d2s(h,0)+") cannot be correct. \nThere are less than "+d2s(w*h,0)+" images in the input folder of well "+well+".");
 }
-if (check_if_tile_nr_is_present(w*w,file_list)){
-	exit("Sorry, the chosen width/height of "+d2s(w,0)+" cannot be correct. \nThere are more than "+d2s(w*w,0)+" images in the input folder of well "+well+".");
+if (check_if_tile_nr_is_present(w*h,file_list)){
+	exit("Sorry, the chosen width ("+d2s(w,0)+") or height ("+d2s(h,0)+") cannot be correct. \nThere are more than "+d2s(w*h,0)+" images in the input folder of well "+well+".");
 outline_color}
 if (File.exists(output_file)){
 	showMessageWithCancel("WARNING","Warning: fused image is already created!\nDo you want to continue and overwrite the old fused image?");
@@ -183,7 +184,7 @@ th_channels = find_channels_in_tile_folder(th_file_list);
 nr_channels = channels.length;
 ch_labels = newArray(nr_channels);
 ch_defaults = newArray(nr_channels);
-default_channel_to_stitch = "channel 0";
+default_channel_to_stitch = "channel " + d2s(channels[0],0);
 for (i = 0; i < nr_channels; i++) {
 	ch = channels[i];
 	ch_labels[i] = "channel " + d2s(ch,0);
@@ -303,7 +304,7 @@ if (nr_th_channels > 0){
 else{
 	stitch_th_channels_str = "None";
 }
-metadata = "NumberOfFields = " + d2s(w*w,0) + "\n";
+metadata = "NumberOfFields = " + d2s(w*h,0) + "\n";
 metadata = metadata + "ChannelsStitched = " + stitch_channels_str + "\n";
 metadata = metadata + "ThresholdedChannelsStitched = " + stitch_th_channels_str + "\n";
 if (stitch_th_channels_str != "None"){
@@ -318,13 +319,14 @@ print(">>>> Saved metadata file in " + well_folder + ".\n");
 
 // Stitch overlap channel -----------------------------------------------------------------
 
+print(tile_folder);
 if (brute_force) {
 	print("\n>>> BRUTE-FORCE STITCH ON CHANNEL "+d2s(ol_channel,0)+"...\n");
-	run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(w,0)+" starttile=0 imagedir="+tile_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=false assemblenooverlap=true globalpositionsfile=[] numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(w,0)+" timeslices="+d2s(ol_channel,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=true outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath=["+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap=0 verticaloverlap=0 numfftpeaks=0 overlapuncertainty=0 isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
+	run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(h,0)+" starttile=0 imagedir="+tile_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=false assemblenooverlap=true globalpositionsfile=[] numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(h,0)+" timeslices="+d2s(ol_channel,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=true outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath=["+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap=0 verticaloverlap=0 numfftpeaks=0 overlapuncertainty=0 isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
 }
 else{
 	print("\n>>> COMPUTING OVERLAP OF TILES OF CHANNEL "+d2s(ol_channel,0)+"...\n");
-	run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(w,0)+" starttile=0 imagedir="+tile_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=false assemblenooverlap=false globalpositionsfile=[] numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(w,0)+" timeslices="+d2s(ol_channel,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=true outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath=["+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap="+d2s(ol,0)+" verticaloverlap="+d2s(ol,0)+" numfftpeaks=0 overlapuncertainty="+d2s(ol_uncertainty,0)+" isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
+	run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(h,0)+" starttile=0 imagedir="+tile_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=false assemblenooverlap=false globalpositionsfile=[] numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(h,0)+" timeslices="+d2s(ol_channel,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=true outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath=["+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap="+d2s(ol,0)+" verticaloverlap="+d2s(ol,0)+" numfftpeaks=0 overlapuncertainty="+d2s(ol_uncertainty,0)+" isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
 }
 rename("Fused-c"+d2s(ol_channel,0));
 
@@ -350,7 +352,7 @@ if (remaining_channels.length > 0){
 			File.delete(well_folder + q + "img-statistics.txt");
 		}
 	
-		run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(w,0)+" starttile=0 imagedir="+tile_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=true assemblenooverlap=false globalpositionsfile="+well_folder+q+"img-global-positions-{t}.txt numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(w,0)+" timeslices="+d2s(ch,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=false outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath="+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap="+d2s(ol,0)+" verticaloverlap="+d2s(ol,0)+" numfftpeaks=0 overlapuncertainty="+d2s(ol_uncertainty,0)+" isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
+		run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(h,0)+" starttile=0 imagedir="+tile_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=true assemblenooverlap=false globalpositionsfile="+well_folder+q+"img-global-positions-{t}.txt numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(h,0)+" timeslices="+d2s(ch,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=false outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath="+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap="+d2s(ol,0)+" verticaloverlap="+d2s(ol,0)+" numfftpeaks=0 overlapuncertainty="+d2s(ol_uncertainty,0)+" isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
 		rename("Fused-c"+d2s(ch,0));
 	}
 	
@@ -432,7 +434,7 @@ if (th_channels_to_stitch.length > 0){
 			File.delete(well_folder + q + "img-statistics.txt");
 		}
 		
-		run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(w,0)+" starttile=0 imagedir="+threshold_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=true assemblenooverlap=false globalpositionsfile="+well_folder+q+"img-global-positions-{t}.txt numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(w,0)+" timeslices="+d2s(ch,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=false outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath=["+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap="+d2s(ol,0)+" verticaloverlap="+d2s(ol,0)+" numfftpeaks=0 overlapuncertainty="+d2s(ol_uncertainty,0)+" isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
+		run("MIST", "gridwidth="+d2s(w,0)+" gridheight="+d2s(h,0)+" starttile=0 imagedir="+threshold_folder+" filenamepattern=tile_{ppp}_ch{t}.tif filenamepatterntype=SEQUENTIAL gridorigin=UL assemblefrommetadata=true assemblenooverlap=false globalpositionsfile="+well_folder+q+"img-global-positions-{t}.txt numberingpattern=VERTICALCOMBING startrow=0 startcol=0 extentwidth="+d2s(w,0)+" extentheight="+d2s(h,0)+" timeslices="+d2s(ch,0)+" istimeslicesenabled=true outputpath="+well_folder+" displaystitching=true outputfullimage=false outputmeta=false outputimgpyramid=false blendingmode=LINEAR blendingalpha=NaN outfileprefix=img- programtype=AUTO numcputhreads=16 loadfftwplan=true savefftwplan=true fftwplantype=MEASURE fftwlibraryname=libfftw3 fftwlibraryfilename=libfftw3.dll planpath=["+fiji_path+q+"lib"+q+"fftw"+q+"fftPlans] fftwlibrarypath=["+fiji_path+q+"lib"+q+"fftw] stagerepeatability=0 horizontaloverlap="+d2s(ol,0)+" verticaloverlap="+d2s(ol,0)+" numfftpeaks=0 overlapuncertainty="+d2s(ol_uncertainty,0)+" isusedoubleprecision=false isusebioformats=false issuppressmodelwarningdialog=false isenablecudaexceptions=false translationrefinementmethod=SINGLE_HILL_CLIMB numtranslationrefinementstartpoints=16 headless=false loglevel=MANDATORY debuglevel=NONE");
 		rename(well+"_th_"+suggested_names[i]);
 
 		// Ask the user if they are happy with the thresholds
@@ -460,21 +462,21 @@ if (th_channels_to_stitch.length > 0){
 			W = getWidth();
 			H = getHeight();
 			width = round(W / w);
-			height = round(H / w);
+			height = round(H / h);
 			setJustification("center");
 			setFont("SansSerif", 300);
 			setColor("white");
 
-			column_grid = make_column_grid(w,w);
+			column_grid = make_column_grid(w,h);
 			x = 0;
 			y = 0;
 			
-			for (i = 0; i < w*w; i++) {
+			for (i = 0; i < w*h; i++) {
 				tile_nr = column_grid[x + y*w]; // column index corresponding with (x,y) position
 				drawString(tile_nr, x*width + width/2, y*height + height/2, "black");
 				// Update position
 				y = y + 1;
-				if (y == w){
+				if (y == h){
 					y = 0;
 					x = x + 1;
 				}

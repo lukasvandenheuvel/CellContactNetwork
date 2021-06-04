@@ -193,39 +193,11 @@ function make_spiral_grid(width,height,clockwise){
 			x = x + dx;
 			y = y + dy;
 			// If you are at the boundary, stop the process and return the matrix:
-			if (!((0 <= x) & (x < width)) & (0 <= y) & (y < height)){
+			if (!(((0 <= x) & (x < width)) & (0 <= y) & (y < height))){
 				return matrix;
 			}
 		}
 	}
-}
-
-function make_column_grid(width, height){
-
-	//-----------------------------------------------------
-	// This function makes a column grid array.
-	// Note that 2D arrays are not supported by Fiji macro language.
-	// The output will be a 1D array with length width*height.
-	
-	// If you index it with matrix[x + y * width], 
-	// the matrix is effectively 2D.
-	//-----------------------------------------------------
-	
-	matrix = newArray(width*height);
-	Array.fill(matrix, NaN);
-	count = 0;
-	x = 0;
-	y = 0;
-	for (i = 0; i < width*height; i++) {
-		matrix[x + y*width] = count;
-		count = count + 1;
-		y = y + 1;
-		if (y == height){
-			y = 0;
-			x = x + 1;
-		}
-	}
-	return matrix;
 }
 
 function make_column_grid(width, height){
@@ -325,30 +297,29 @@ function find_name_of_first_image_in_list(file_list){
 	return img0;
 }
 
-function number_to_string(nr, three_numbers){
+function number_to_string(nr, min_length){
 	//------------------------------------------------------
 	// This function converts an integer nr into a string.
-	// Examples: 0 --> "00", 3 --> "03", 11 --> "11", 102 --> "102".
-	// If three_numbers == true:
-	// Examples: 0 --> "000", 3 --> "003", 11 --> "011", 102 --> "102".
+	// Examples: 
+	// if min_length is 2:
+	// 0 --> "00", 3 --> "03", 11 --> "11", 102 --> "102".
+	// If min_length is 3:
+	// 0 --> "000", 3 --> "003", 11 --> "011", 102 --> "102".
 	//------------------------------------------------------
-	
-	if ((nr < 10) && three_numbers){
-		nr_string = "00" + d2s(nr, 0);
-	}
-	else if ((nr < 10) && !three_numbers){
-		nr_string = "0" + d2s(nr, 0);
-	}
-	else if ((nr > 9) && (nr < 100) && three_numbers){
-		nr_string = "0" + d2s(nr, 0);
-	}
-	else{
-		nr_string = d2s(nr, 0);
+
+	nr_string = d2s(nr,0);
+	number_of_zeros_to_add = min_length - lengthOf(nr_string);
+	if (number_of_zeros_to_add>0){
+		zeros = "";
+		for (i = 0; i < number_of_zeros_to_add; i++) {
+			zeros = zeros + "0";
+		}
+		nr_string = zeros + nr_string;
 	}
 	return nr_string;
 }
 
-function get_img_file_name(file0, well, nr, ch){
+function get_mfgtmp_file_name(file0, well, nr, ch){
 	
 	//------------------------------------------------------
 	// This function returns the filename of a raw tile
@@ -376,8 +347,48 @@ function get_img_file_name(file0, well, nr, ch){
 	//------------------------------------------------------
 	
 	parts = split(file0, "_");
-	nr_string = number_to_string(nr,false);
+	nr_string = number_to_string(nr,2);
 	file_name = parts[0] + "_" + parts[1] + "_" + well + "f" + nr_string + "d" + d2s(ch,0) + ".TIF";
+	return file_name;
+}
+
+function get_file_name_from_format(filename_format, well, img_nr, ch){
+	//---------------------------------------------
+	// This function returns the filename as it is specified by a filename format.
+	// A filename format can be: img_{W}_f{SS}_ch{C}.tif
+	// Here, {W} stands for the well name (e.g. B02), {SS} for the position of the tile 
+	// in the spiral grid (e.g. 120),
+	// and {C} for the channel number (e.g. 1).
+	// The length of these characters (SS and C) are the MINIMAL length of the numbers.
+	//
+	// Example: if the field numbers are like 00, 01, ..., 10, ..., 114, then you should enter {SS}.
+	// If the field numbers are 000, 001, ..., 114, then you should enter {SSS}.
+	//---------------------------------------------
+
+	// Start with inserting the well
+	
+	format_split = split(filename_format, "{}");
+	file_name = "";
+	for (ii = 0; ii < format_split.length; ii++) {
+		filename_part = format_split[ii];
+		check_well = split(filename_part, "W");
+		check_field = split(filename_part, "S");
+		check_ch = split(filename_part, "C");
+		if (check_well.length==0) { // there was a "W" between the curly brackets
+			file_name = file_name + well;
+		}
+		else if (check_field.length==0) { // there was an arbritary number of "S"s between the curly brackets
+			min_length = lengthOf(filename_part); // get the number of S's.
+			file_name = file_name + number_to_string(img_nr, min_length);
+		}
+		else if (check_ch.length==0) { // there was an arbritary number of "c"s between the curly brackets
+			min_length = lengthOf(filename_part); // get the number of c's.
+			file_name = file_name + number_to_string(ch, min_length);
+		}
+		else { // there was no well, field or channel info in this part
+			file_name = file_name + filename_part;
+		}
+	}
 	return file_name;
 }
 
@@ -407,26 +418,6 @@ function get_true_indeces_as_string(boolean_list){
 	return boolean_list_str;
 }
 
-function find_channels_in_mfgtmp_folder(file_list){
-	//------------------------------------------------------
-	// This function finds which channels are present in a
-	// list of input tiles.
-	// Example: if MFGTMP_201125130001_B03f00d0.tif and MFGTMP_201125130001_B03f00d1.tif are present
-	// in file_list, then channels_present = [0,1]
-	//------------------------------------------------------
-	channels_present = newArray(0);
-	for (i = 0; i < file_list.length; i++) {
-		file = file_list[i];
-		if (indexOf(file, "MFGTMP") == 0){
-			split_file = split(file, "d");
-			split_file = split(split_file[1], ".");
-			ch_nr = parseInt( split_file[0] );
-			channels_present = Array.concat(channels_present,ch_nr);
-		}
-	}
-	return channels_present;
-}
-
 //---------------------------END FUNCTIONS-----------------------------
 
 //---------------------------START SCRIPT------------------------------
@@ -435,10 +426,20 @@ function find_channels_in_mfgtmp_folder(file_list){
 #@ File (label="Raw folder", style="directory") raw
 #@ File (label="Root folder", style="directory") root
 #@ String (label="Wells you want to process (separated by commas)") well_string
-#@ int (label="Number of channels") nr_channels
-#@ int (label="Width/height of fused image") w
+#@ String (label="Channels you want to process (separated by commas)") channel_str
+#@ String (label="Filename format, e.g. img_{W}_f{SS}_ch{C}.tif (enter MFGTMP to use the standard HCA format)") filename_format
+#@ int (label="Width of fused image (in number of tiles)") w
+#@ int (label="Height of fused image (in number of tiles)") h
 
 q = File.separator;
+
+// Make a list of the channels to process
+channel_str_split = split(channel_str, ",");
+channels = newArray(channel_str_split.length);
+for (i = 0; i < channel_str_split.length; i++) {
+	channels[i] = parseInt(channel_str_split[i]);
+}
+
 // Check inputs and create directories-----------------------------------------
 
 well_list = split(well_string, ",");
@@ -451,33 +452,43 @@ for (l = 0; l < well_list.length; l++) {
 	well_folder = root + q + well;
 	tile_folder = well_folder + q + "tiles";
 	threshold_folder = tile_folder + q + "thresholds";
+	file_list = getFileList(input_folder);
 
 	// Check if the input folder exists
 	if(!File.exists(input_folder)){
 		exit("Sorry, well "+well+" does not appear in the raw folder you specified.");
 	}
 
-	// Check if the inputted width/height (w) is correct
-	file_list = getFileList(input_folder);
-	file0 = find_name_of_first_image_in_list(file_list);
-	last_file_nr = w*w - 1;
-	last_file = input_folder + q + get_img_file_name(file0, well, last_file_nr, 0);
-	one_file_too_far = input_folder + q + get_img_file_name(file0, well, last_file_nr+1, 0);
-	if (!File.exists(last_file)){
-		exit("Sorry, the chosen width/height of "+d2s(w,0)+" cannot be correct. \nThere are less than "+d2s(w*w,0)+" images in the input folder of well "+well+".");
-	}
-	if (File.exists(one_file_too_far)){
-		exit("Sorry, the chosen width/height of "+d2s(w,0)+" cannot be correct. \nThere are more than "+d2s(w*w,0)+" images in the input folder of well "+well+".");
+	// Check if the inputted channels exist
+	for (c = 0; c < channels.length; c++) {
+		if (filename_format=="MFGTMP"){
+			file0 = find_name_of_first_image_in_list(file_list);
+			first_field = input_folder + q + get_mfgtmp_file_name(file0, well, 0, channels[c]);
+		}
+		else {
+			first_field = input_folder + q + get_file_name_from_format(filename_format, well, 0, channels[c]);
+		}
+		if (!File.exists(first_field)){
+			exit("Sorry, I was trying to find an image with the name\n" + first_field + "\nbut I could not find it.\nDid you enter the correct channels and the correct filename format?");
+		}
 	}
 
-	// Check if the inputted number of channels is correct
-	last_ch_file = input_folder + q + get_img_file_name(file0, well, 0, nr_channels-1);
-	one_file_too_far = input_folder + q + get_img_file_name(file0, well, 0, nr_channels);
-	if (!File.exists(last_ch_file)){
-		exit("Sorry, the chosen number of channels of "+d2s(nr_channels,0)+" cannot be correct. \nFound less than "+d2s(nr_channels,0)+" channels in the input folder of well "+well+".");
+	// Check if the inputted width/height (w) is correct
+	last_file_nr = w*h - 1;
+	if (filename_format=="MFGTMP"){
+		file0 = find_name_of_first_image_in_list(file_list);
+		last_file = input_folder + q + get_mfgtmp_file_name(file0, well, last_file_nr, channels[0]);
+		one_file_too_far = input_folder + q + get_mfgtmp_file_name(file0, well, last_file_nr+1, channels[0]);
+	}
+	else{
+		last_file = input_folder + q + get_file_name_from_format(filename_format, well, last_file_nr, channels[0]);
+		one_file_too_far = input_folder + q + get_file_name_from_format(filename_format, well, last_file_nr+1, channels[0]);
+	}
+	if (!File.exists(last_file)){
+		exit("Sorry, the chosen width ("+d2s(w,0)+") or height ("+d2s(h,0)+") cannot be correct. \nThere are less than "+d2s(w*h,0)+" images in the input folder of well "+well+".");
 	}
 	if (File.exists(one_file_too_far)){
-		exit("Sorry, the chosen number of channels of "+d2s(nr_channels,0)+" cannot be correct. \nFound more than "+d2s(nr_channels,0)+" channels in the input folder of well "+well+".");
+		exit("Sorry, the chosen width ("+d2s(w,0)+") or height ("+d2s(h,0)+") cannot be correct. \nThere are more than "+d2s(w*h,0)+" images in the input folder of well "+well+".");
 	}
 	
 	// Create well_folder if it did not exist already.
@@ -501,10 +512,12 @@ for (l = 0; l < well_list.length; l++) {
 // Get additional specifications with dialog---------------------------
 
 // Labels and defaults
+nr_channels = channels.length;
 ch_labels = newArray(nr_channels);
 ch_defaults = newArray(nr_channels);
 for (i = 0; i < nr_channels; i++) {
-	ch_labels[i] = "channel " + d2s(i,0);
+	ch = channels[i];
+	ch_labels[i] = "channel " + d2s(ch,0);
 	ch_defaults[i] = false;
 }
 bit_labels = newArray("8-bit", "16-bit", "32-bit");
@@ -512,34 +525,35 @@ clockwise_labels = newArray("Clockwise", "Counter-clockwise");
 
 Dialog.create("Specify parameters");
 
+center_inset = 375;
 Dialog.setInsets(10, 0, 0);
 Dialog.addMessage("General specifications:");
 Dialog.addChoice("Spiral direction (use macro clockOrAnticlock.ijm to find this out)", clockwise_labels);
 Dialog.addChoice("How many bits in output?", bit_labels);
 Dialog.addNumber("Downscale factor (1=no downscaling)", 1);
-Dialog.setInsets(0, 375, 0);
+Dialog.setInsets(0, center_inset, 0);
 Dialog.addCheckbox("Do you want to display the images?", false);
 
 Dialog.setInsets(40, 0, 0);
 Dialog.addMessage("On which channels do you want to enhance contrast? (See Process > Enhance contrast)");
-Dialog.setInsets(0, 375, 0);
+Dialog.setInsets(0, center_inset, 0);
 Dialog.addCheckboxGroup(1, nr_channels, ch_labels, ch_defaults);
 Dialog.addNumber("Percentage of saturated pixels", 0.1);
 
 Dialog.setInsets(40, 0, 0);
 Dialog.addMessage("On which of these channels do you want to equalize histogram? (See Process > Enhance contrast)");
-Dialog.setInsets(0, 375, 0);
+Dialog.setInsets(0, center_inset, 0);
 Dialog.addCheckboxGroup(1, nr_channels, ch_labels, ch_defaults);
 
 Dialog.setInsets(40, 0, 0);
 Dialog.addMessage("On which channels do you want to subtract background? (See Process > Subtract background)");
-Dialog.setInsets(0, 375, 0);
+Dialog.setInsets(0, center_inset, 0);
 Dialog.addCheckboxGroup(1, nr_channels, ch_labels, ch_defaults);
 Dialog.addNumber("Rolling ball radius", 200);
 
 Dialog.setInsets(40, 0, 0);
 Dialog.addMessage("On which channels do you want to set a threshold?");
-Dialog.setInsets(0, 375, 0);
+Dialog.setInsets(0, center_inset, 0);
 Dialog.addCheckboxGroup(1, nr_channels, ch_labels, ch_defaults);
 Dialog.addString("Thresholding methods for these channels (start with capital letter)", "-");
 Dialog.addNumber("Sigma of Gaussian blur (for thresholding)", 2);
@@ -596,8 +610,8 @@ if (!(see)) {
 // Make spiral and column grid arrays
 // Note that 2D arrays are not supported by Fiji macro language, so the arrays are 1D.
 // If you index it them with matrix[x + y * width], they are effectively 2D.
-column_grid = make_column_grid(w,w);
-spiral_grid = make_spiral_grid(w,w,clockwise);
+column_grid = make_column_grid(w,h);
+spiral_grid = make_spiral_grid(w,h,clockwise);
 
 // Loop over wells-----------------------------------------------------------------------
 
@@ -612,7 +626,8 @@ for (l = 0; l < well_list.length; l++) {
 
 	// Save parameters to txt file
 	metadata = "RawDataFolder = " + input_folder + "\n";
-	metadata = metadata + "NumberOfTiles = " + d2s(w*w,0) + "\n";
+	metadata = metadata + "NumberOfTiles = " + d2s(w*h,0) + "\n";
+	metadata = metadata + "ChannelsToProcess = " + channel_str + "\n";
 	metadata = metadata + "SpiralDirection = " + spiral_direction + "\n";
 	metadata = metadata + "NumberOfBits = " + nr_bits_string + "\n";
 	metadata = metadata + "DownscaleFactor = " + d2s(downscale_factor,0) + "\n";
@@ -636,22 +651,26 @@ for (l = 0; l < well_list.length; l++) {
 	
 	// List all images in the raw input folder:
 	file_list = getFileList(input_folder);
-	// Get the name of the first file (it serves as a template).
-	file0 = find_name_of_first_image_in_list(file_list);
+	
+	// Get the name of the first MFGTMP file (it serves as a template).
+	file0 = ""; // init
+	if (filename_format=="MFGTMP") {
+		file0 = find_name_of_first_image_in_list(file_list);
+	}
 	
 	// Initialize positions on grid
 	x = 0;
 	y = 0;
 	
 	// Loop over tiles in the grid
-	for (i = 0; i < w*w; i++) {
-		print("Well "+well+": Processing tile "+d2s(i+1,0)+" out of "+d2s(w*w,0)+".");
+	for (i = 0; i < w*h; i++) {
+		print("Well "+well+": Processing tile "+d2s(i+1,0)+" out of "+d2s(w*h,0)+".");
 	
 		// Give the image the correct tile number.
 		// This number is based on the column grid.
 		tile_nr = column_grid[x + y*w]; // column index corresponding with (x,y) position
 		img_nr = spiral_grid[x + y*w];  // spiral index corresponding with (x,y) position
-		tile_nr_string = number_to_string(tile_nr,true); // for output (three numbers)
+		tile_nr_string = number_to_string(tile_nr,3); // for output (three numbers)
 		tile_name = "tile_" + tile_nr_string;
 		
 		// Initialize arrays with filenames and channel numbers.
@@ -663,10 +682,17 @@ for (l = 0; l < well_list.length; l++) {
 		ch_th_string = "";
 		
 		// Loop over the channels in the image
-		for (ch = 0; ch < nr_channels; ch++){
-			file_name = get_img_file_name(file0, well, img_nr, ch);
-			file_names[ch] = file_name;
-			ch_counts[ch] = "c" + d2s(ch+1,0);
+		for (j = 0; j < nr_channels; j++){
+			ch = channels[j];
+			file_name = ""; // init
+			if (filename_format=="MFGTMP") {
+				file_name = get_mfgtmp_file_name(file0, well, img_nr, ch);
+			}
+			else{
+				file_name = get_file_name_from_format(filename_format, well, img_nr, ch);
+			}
+			file_names[j] = file_name;
+			ch_counts[j] = "c" + d2s(ch+1,0);
 			
 			// Open image
 			open(input_folder + q + file_name);
@@ -681,17 +707,17 @@ for (l = 0; l < well_list.length; l++) {
 			}
 	
 			// Perform the operations if the user asked for it:
-			if ((ch_enhance[ch] == true) && (ch_equalize[ch] == false)){
+			if ((ch_enhance[j] == true) && (ch_equalize[j] == false)){
 				run("Enhance Contrast...", "saturated="+d2s(fraction_saturated,1)+" normalize");
 			}
-			if ((ch_enhance[ch] == true) && (ch_equalize[ch] == true)){
+			if ((ch_enhance[j] == true) && (ch_equalize[j] == true)){
 				run("Enhance Contrast...", "saturated="+d2s(fraction_saturated,1)+" normalize equalize");
 			}
-			if (ch_subtract_background[ch] == true){
+			if (ch_subtract_background[j] == true){
 				run("Subtract Background...", "rolling="+d2s(rolling_ball_radius,0)+" disable");
 			}
 
-			if (ch_threshold[ch] == true){
+			if (ch_threshold[j] == true){
 				// Specify channel string name for merging threshold channels
 				ch_th_string = ch_th_string + "c" + d2s(threshold_counter+1,0) + "=th_" + d2s(threshold_counter+1,0) + " ";
 				th_method = threshold_method_list[threshold_counter];
@@ -713,7 +739,7 @@ for (l = 0; l < well_list.length; l++) {
 
 		// Update position
 		y = y + 1;
-		if (y == w){
+		if (y == h){
 			y = 0;
 			x = x + 1;
 		}
