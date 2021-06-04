@@ -14,7 +14,7 @@ If the input image is large, you can choose to do the segmentation on smaller pa
 - Run ```python FindNetworkCellpose.py```. After a short while, you will be asked the following three questions:  
 
 <p align="center">
-  <img width="400" src="assets/img/ChooseModel.PNG")>
+  <img width="400" src="assets/img/ChooseModel.PNG">
 </p>
 
 ### 1. How many images do you want to process? 
@@ -29,7 +29,7 @@ If you want to process a batch of files, you can choose to either store them in 
 Select this option if, for example, you want to segment all *ch1* images in this folder:  
 
 <p align="center">
-  <img width="400" src="assets/img/ImagesInOneFolder.PNG")>
+  <img width="400" src="assets/img/ImagesInOneFolder.PNG">
 </p>
 
 You will be asked to select the folder containing the images, and the output folder (where you want the segmented output files to be stored).  
@@ -37,7 +37,7 @@ You will be asked to select the folder containing the images, and the output fol
 If you want to process a subset of images in the folder (e.g. only the *channel 1* images), you can do so in the next dialog:  
 
 <p align="center">
-  <img width="500" src="assets/img/FileNameMustInclude.PNG")>
+  <img width="500" src="assets/img/FileNameMustInclude.PNG">
 </p>
 
 If you want to process all images in the folder, it is recommended to enter the file extension here (```.PNG``` or ```.tif```) so that the program won't try to read any storage files.  
@@ -46,13 +46,13 @@ If you want to process all images in the folder, it is recommended to enter the 
 You can use this last option if you, for example, want to segment fused images of wells that are stored in individual well folders:  
 
 <p align="center">
-  <img width="400" src="assets/img/ImagesInWellFolders.PNG")>
+  <img width="400" src="assets/img/ImagesInWellFolders.PNG">
 </p>
 
 First you will be asked to select the ```root``` directory, i.e. the directory that contains the well folders. Then you enter further specifications:
 
 <p align="center">
-  <img width="500" src="assets/img/SpecifyWellFolders.PNG")>
+  <img width="500" src="assets/img/SpecifyWellFolders.PNG">
 </p>
 
 You can either process a selection of wells (enter the well names seperated by commas, e.g. ```B02,B03```) or check the box ```Process all wells in root``` to process all folders inside the root directory you selected.  
@@ -61,14 +61,14 @@ Next, you can further specify the name of the folders where the images are store
 
 *Example 1*  
 <p align="center">
-  <img width="400" src="assets/img/ImagesInWellFolders.PNG")>
+  <img width="400" src="assets/img/ImagesInWellFolders.PNG">
 </p>
 
 Here, the ```<well>_fused_RGB.tif``` images are stored in folders which have the same name as the wells themselves. In that case, enter ```{WWW}``` as folder name format (the three W's stand for the well name, e.g. 'B02'), and ```{WWW}_fused_RGB.tif``` as filename format.  
 
 *Example 2*  
 <p align="center">
-  <img width="400" src="assets/img/ImagesInWellSubFolders.PNG")>
+  <img width="400" src="assets/img/ImagesInWellSubFolders.PNG">
 </p>
 
 Here, the images are all stored in a subfolder called ```CaImaging```. Now you enter ```{WWW}\CaImaging``` as folder name format, which represents the path to each RGB tiff image. The filename format is now ```f01_SIRactin_RGB.tif``` (note that all filenames are the same).  
@@ -90,7 +90,7 @@ Once you click ```Continue```, the script will read **one of** the images you se
 
 - Choose the parameters for segmentation and network detection with the next dialog: 
 <p align="center">
-  <img width="500" src="assets/img/ChooseParameters.PNG")>
+  <img width="500" src="assets/img/ChooseParameters.PNG">
 </p>
 
 1. ```Divide fused in patches```: This box will be automatically checked if the selected image has a width of more than 1200 pixels. When checked, the script will divide the whole image in overlapping patches of size ```patch width x patch height```, which will then be segmented sequentually. After the segmentation, the patches are aligned back into a fused segmentation.
