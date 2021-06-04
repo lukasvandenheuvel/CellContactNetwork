@@ -23,7 +23,7 @@ Follow these instructions to install [Cellpose](https://www.cellpose.org/) on yo
 - Open the Anaconda Prompt application.
 - Navigate to the folder where the ```environment.yml``` file is stored with ```cd path/to/folder```. To move to the M-drive, press ```M:``` and enter.
 - Run ```conda env create -f environment.yml```.
-- When all packages are installed, activate the environment with ```conda activate ccn```.
+- When all packages are installed, activate the cell-contact-network environment with ```conda activate ccn```.
 - You should see (```ccn```) on the left side of the terminal line.
 - Run ```python -m cellpose``` to start up the Cellpose GUI. If it works, you're all set and you can start [detecting multicellular networks](network_detection.md).
 
