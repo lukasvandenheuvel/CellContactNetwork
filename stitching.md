@@ -50,7 +50,7 @@ If you have images with a different name format, e.g. ```img_B02_f00_ch0.tif```,
 You will get error messages if the wells are not found in the raw folder. Also, you will get error messages if the number the width/height of the fused image does not match the number of images found in the input well folders.
 
 <p align="center">
-  <img src="./assets/img/MISTprepareTiles1.png">
+  <img src="./assets/img/MISTprepareTiles1.PNG">
 </p>
 
 - Click OK. In the second dialog you can enter additional parameters: 
@@ -61,7 +61,7 @@ You will get error messages if the wells are not found in the raw folder. Also, 
   - **The operations (downscaling, contrast enhancement, background subtraction and blurring+thresholding) are done in the order in which they appear on this dialog.** Test these operations on individual tiles before you run this macro.  
 
 <p align="center">
-  <img src="./assets/img/MISTprepareTiles2.png">
+  <img src="./assets/img/MISTprepareTiles2.PNG">
 </p>
 
 - Click OK to start the tile preparation. You can see the progress in the Log window.
@@ -87,14 +87,14 @@ Prepared tiles created with the macro ```1_prepareTilesMIST.ijm```.
   - The width and height of the fused image grid (in number of tiles).
 
 <p align="center">
-  <img src="./assets/img/MISTstitch1.png">
+  <img src="./assets/img/MISTstitch1.PNG">
 </p>
 
 - When you click OK, the macro will detect which channels and thresholded channels there are in the well folder you specified. You can choose which of these channels you want to stitch, and give names to the thresholded channels.  
 - Note that you can only use one channel for calculating overlap (channel 1 in the example below). The remaining channels and the thresholded channels will be stitched based on the coordinates of this overlap channel. There is also the option to brute-force stitch (no overlap will be calculated).
 
 <p align="center">
-  <img src="./assets/img/MISTstitch2.png">
+  <img src="./assets/img/MISTstitch2.PNG">
 </p>
 
 - Once you click OK, the stitching will start. You can see the progress in the LOG window.
