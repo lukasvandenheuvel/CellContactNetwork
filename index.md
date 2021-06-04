@@ -2,7 +2,9 @@
 Processing and analysis of 2D cellular contact networks.  
 This work was done at the Dimphna Meijer Lab of Quantitative Neurobiology, Faculty of Applied Sciences, Department of Bionanoscience, TU Delft.  
 
-![Workflow](./assets/img/Workflow.png)  
+<p align="center">
+  <img width="500" height="500" src="./assets/img/Workflow.png">
+</p>
 
 ***
 
