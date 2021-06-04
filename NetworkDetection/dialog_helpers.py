@@ -810,3 +810,18 @@ def choose_images_and_cellpose_model_with_gui(initial_dir):
         raise ValueError("Fatal error: there are no images to be processed!")
                 
     return img_list,model,do_measure_var.get()
+
+#%% 
+def choose_image_with_gui(initial_dir):
+    '''
+    This function starts up a tkinter GUI which asks the user
+    to open a tiff image.
+    It outputs the path to the fused image (as a string).
+    '''
+    root = tk.Tk()
+    root.filename =  tk.filedialog.askopenfilename(initialdir = initial_dir,title = "Select fused RGB imge",filetypes = (('tif files','*.tif'),
+                                                                                                                         ('png files','*.png')))
+    path_to_fused_image = root.filename
+    root.destroy() # close GUI
+    
+    return path_to_fused_image

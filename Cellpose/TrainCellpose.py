@@ -232,7 +232,7 @@ def save_masks(output_path, mask_list, flow_list, test_data_filenames):
             
     return True
             
-#%% ------------------------------ START CODE ---------------------------------
+#%% --------------------------- SET PARAMETERS --------------------------------
 
 # Specify training parameters -------------------------------------------------
 learning_rate = 0.05
@@ -240,7 +240,7 @@ momentum = 0.9
 channel_to_segment = 'R' # choose 'R', 'G', or 'B'.
 nucleus_channel = 'B'    # choose 'R', 'G', or 'B' or 'None'
 batch_size = 4
-n_epochs = 2
+n_epochs = 7000
 weight_decay = 0.00001
 num_augmentations_per_image = 2
 

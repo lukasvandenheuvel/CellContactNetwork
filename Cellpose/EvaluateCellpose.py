@@ -116,21 +116,17 @@ def save_masks(output_path, mask_list, flow_list, test_data_filenames):
             
     return True
 
-#%%
-plt.close()
+#%% ------------------------------- Set parameters ----------------------------
 flow_threshold = 0.4
 
-path_to_models = r'M:\tnw\bn\dm\Shared\Lukas\NetworkAnalysis\CellContactNetwork\Cellpose\models'
-models_to_test = ['cellpose_residual_on_style_on_concatenation_off_models_2021_05_04_14_22_53.858054', 
-                  'cellpose_residual_on_style_on_concatenation_off_models_2021_05_04_16_57_19.232478', 
-                  'cellpose_residual_on_style_on_concatenation_off_models_2021_05_04_17_18_49.236206']
+path_to_models = './models/AISModel'
+models_to_test = 'all' # set to 'all' to test all models in the directory path_to_models, or make a list with the model filenames you want to test.
 
-#models_to_test = 'all'
-save_model = 2 # save 3rd model in the list
-test_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\test'
-prediction_path = r'M:\tnw\bn\dm\Shared\Jurriaan\Trainingdata\test\predictions'
+save_model = -1 # save predictions of last model in the list
+test_path = './data/test' # where the folders 'image' and 'label' are with test images and labels
+prediction_path = './data/test/predictions' # where you want the predictions to be stored
 
-# Load test data
+## Load test data -------------------------------------------------------------
 test_data,test_data_filenames = load_data(os.path.join(test_path, 'image'))
 test_labels,test_label_filenames = load_data(os.path.join(test_path, 'label'))
 
