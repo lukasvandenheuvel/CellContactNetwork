@@ -9,6 +9,7 @@ Below, an example is described for training a Cellpose model to segment the soma
 </p>
 
 Summary of training data:
+
 |              Dataset             	| Num images 	| Augmented? 	| Final num images 	|
 |:--------------------------------:	|:----------:	|:----------:	|:----------------:	|
 |     AIS data (hand-annotated)    	|     77     	|     yes    	|        231       	|
