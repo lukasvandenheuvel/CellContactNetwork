@@ -1,6 +1,6 @@
 title: Cell Contact Network
 logo: /assets/img/Workflow.png
 description: Processing and analysis of 2D multicellular contact networks.
-theme: jekyll-theme-minimal
+theme: jekyll-theme-steve
 gems:
   - jemoji
