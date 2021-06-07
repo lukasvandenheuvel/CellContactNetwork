@@ -6,7 +6,7 @@ network = load('path/to/<input_name>_network_<model_name>.mat');
 Inside the ```network``` datastructure, you will find the following fields:
   - ```contact_matrix```: N x N sparse matrix, where N is the number of cells detected. This matrix is the contact matrix, which you can convert to a Matlab graph structure with the command 
 ```matlab
-G = graph(full(network.contact_matrix))
+G = graph(network.contact_matrix);
 ```
   - ```img_size```: Size (width and height) of the input image in pixels.
   - ```label```: Array of cell values present on the segmented image.
