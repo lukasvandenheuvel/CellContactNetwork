@@ -25,3 +25,9 @@ G = graph(network.contact_matrix);
 ⚠️ All spatial measurements (area, centroid, perimeter, etc.) are done in **pixels**. You will need to convert these values to milimeters or micrometers. 
 
 ---
+
+The script [```GraphPlot.m```](https://github.com/lukasvandenheuvel/CellContactNetwork/blob/main/NetworkAnalysis/GraphPlot.m) provides an example of how to visualize the segmentation and the network representation. Also, it contains an example of a social network analysis (it plots the betweenness centrality - a global network parameter - versus the area of cells). Its output looks as follows:
+
+<p align="center">
+  <img src="./assets/img/MatlabAnalysis.PNG">
+</p>
