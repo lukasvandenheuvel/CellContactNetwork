@@ -31,14 +31,8 @@ Overview of spiral grid (clockwise) and column grid for 10x and 20x magnificatio
 ### Usage
 - Open Fiji, drag the file [```1_PrepareTilesMIST.ijm```](https://github.com/lukasvandenheuvel/CellContactNetwork/blob/main/Stitching/1_PrepareTilesMIST.ijm) into the Fiji menu bar, and press 'Run'. 
 - In the first dialog, you enter:
-  - The path to the MFGTMP folder storing the input tiles (```Raw folder```). 
-
----
-
+  - The path to the MFGTMP folder storing the input tiles (```Raw folder```).  
 :warning: *Inside* the ```Raw folder```, there should be well folders containing the input images. **Do not select a folder with the name of a well.** 
-
----
-
   - Where you want the well folders with the prepared tiles to be stored (```Root folder```).
   - Which wells you want to process, e.g ```B02,B03,B04```.
   - Which channels you want to process have, e.g. ```0,1,3```.
