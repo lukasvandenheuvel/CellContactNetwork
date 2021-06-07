@@ -1,7 +1,8 @@
-- When the segmentation is done, you can read the measurement results in a Matlab datastructure array using the Matlab command  
+After you [detected a network](network_detection.md), you can read the measurement results in a Matlab datastructure array using the following Matlab command:  
 ```matlab
 network = load('path/to/<input_name>_network_<model_name>.mat');
-```
+```  
+
 Inside the ```network``` datastructure, you will find the following fields:
   - ```contact_matrix```: N x N sparse matrix, where N is the number of cells detected. This matrix is the contact matrix, which you can convert to a Matlab graph structure with the command 
 ```matlab
