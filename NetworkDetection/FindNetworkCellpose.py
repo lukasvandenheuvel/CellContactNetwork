@@ -15,7 +15,7 @@ from scipy import sparse
 from scipy.io import savemat
 
 from dialog_helpers import choose_images_and_cellpose_model_with_gui,choose_cellpose_parameters_with_gui
-from segment_cellpose_helpers import find_network,cellpose_segment,segment_fused_image_with_cellpose
+from segment_cellpose_helpers import find_network,cellpose_segment,remove_small_cells,segment_fused_image_with_cellpose
 
 from cellpose import models
 use_GPU = models.use_gpu()
@@ -128,6 +128,7 @@ for (filename,output_path) in img_list:
                                                       num_cpu_cores=num_cpu_cores)
     else:
         segmented = cellpose_segment(model, fused, cell_diameter, channels)
+        segmented = remove_small_cells(segmented, minimal_cell_size)
     
     if do_measurements:
         print('>>>> FINDING NETWORK...')
