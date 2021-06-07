@@ -1,6 +1,6 @@
 # Detect Multicellular Networks
 
-The script ```FindNetworkCellpose.py``` segments cells on a microscopy image (grayscale or RGB) using Cellpose, and finds the corresponding cellular contact network. The script takes as input a TIFF or PNG microscopy image (e.g. ```Input.tif```), and outputs 3 files:
+The script ```FindNetworkCellpose.py``` segments cells on a microscopy image (grayscale or RGB) using Cellpose, and finds the corresponding cellular contact network. The script takes as input a TIFF or PNG microscopy image and outputs 3 files. The filenames in the list below are example filenames where the input image is called ```Input.tif``` and the model type is ```cyto```.
 - ```Input_cellpose_parameters_cyto.txt``` containing the parameters of the segmentation and network detection.
 - ```Input_cellpose_segmentation_cyto.tif```, the segmented 32-bit image where each cell is labeled with a seperate grayscale value.
 - ```Input_network_cyto.mat```, containing the extracted network and other cell measurements (e.g. positions of the centers of mass, the area, circularity, etc.). You can also choose to omit this last file from the output.  
@@ -105,13 +105,15 @@ Once you click ```Continue```, the script will read **one of** the images you se
 9. ```Minimal cell area```: Segmentations with an area of less than ```Minimal cell area``` are removed. Change this parameter and press ```Preview``` to see how it alters segmentation.  
 10. ```Num CPU cores```: Is only used if ```Divide fused in patches``` is checked. Calculating the overlap between cells is done on multiple cores seperately. If you have many programs open, you are recommended to use ~3/4 of the cores in your machine. Leave this parameter at 0 to leave 2 cores available and use the rest for segmentation.
 
+- Check the parameter settings with the ```Preview``` button. This will show you the segmentation result for a single patch:
+
+<video width="320" height="240" controls>
+  <source src="assets/gif/Media1.mp4" type="video/mp4">
+</video>
+
 ---
 
 ⚠️ When you are satisfied with the parameter settings (press ```Preview``` to check), **close the Preview window on the right** (you might need to press the close button several times, this is normal). Then, press the green ```Continue``` button. Depending on the size of the image, the segmentation may take several seconds (for an image with 1024 x 1024 pixels) or up to one hour (for a fused image taken with 20x magnification). You can see the progress in the Anaconda prompt. 
 
 ---
 
-- When the segmentation is done, you can read the measurement results in a Matlab datastructure array using the Matlab command  
-```matlab
-load('path/to/<Input_name>_network_cyto.mat')
-```
