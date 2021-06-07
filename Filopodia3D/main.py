@@ -12,10 +12,11 @@ import time
 import datetime
 import matplotlib.pyplot as plt
 
-from data import load_dataset, show_dataset
+from data import DataLoader
 from model import try_gpu, Unet3D
 
 from skimage import io
+import pickle
 
 def list_to_tensor(list_of_tensors):
     N = len(list_of_tensors)
@@ -31,7 +32,7 @@ def list_to_tensor(list_of_tensors):
 #%%
 def fit_3D_unet(path,
                 learning_rate, momentum, n_epoch,batch_size, 
-                num_channels=1, test=False,
+                num_channels=1, overlap=22, fov=128, z_stack=16, min_slice=10, test=False,
                 input_dim = [128,128,32], div=1):
     
     
@@ -40,7 +41,8 @@ def fit_3D_unet(path,
     field_size = input_dim[0]
     z_stack = input_dim[2]
     
-    train_loader = load_dataset(path, field_size, overlap, z_stack, min_slice)
+    data = DataLoader(path, field_size, overlap, z_stack, min_slice)
+    train_loader = data.load_train()
     image,label = list(zip(*train_loader))
     image = list_to_tensor(image)
     label = list_to_tensor(label).squeeze(1)
@@ -116,11 +118,11 @@ def fit_3D_unet(path,
 #%%--------------------------------PARAMETERS---------------------------------
 
 # Define train and target path
-path = 'data/data_set'
+path = './data/data_set'
 
 # Training parameters
 batch_size = 2
-n_epoch = 500
+n_epoch = 1500
 learning_rate = 0.0001
 momentum = 0.99
 num_channels = 3
@@ -143,6 +145,7 @@ tic = time.perf_counter()
 net, losses, accs, predictions = fit_3D_unet(path,
                                              learning_rate, momentum, n_epoch, batch_size,
                                              num_channels=num_channels,
+                                             fov=fov, overlap=overlap, z_stack=z_stack, min_slice=min_slice,
                                              test=test, input_dim=input_dim, div=div)
 toc = time.perf_counter()
 #%%
@@ -170,3 +173,8 @@ for i in range(len(predictions)):
     io.imsave(pred_out, p)
     io.imsave(lbl_out, label)
     io.imsave(img_out, img)
+
+result_dict = {'losses': losses, 'accuracies': accs}
+path_to_losses = os.path.join('./models', 'filo3D_d' + date + '_t' + time + '.pkl')
+with open(path_to_losses, "wb") as tf:
+    pickle.dump(result_dict,tf)

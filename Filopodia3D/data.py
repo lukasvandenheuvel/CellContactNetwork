@@ -217,10 +217,10 @@ class DataLoader():
     
         else:
             exc = exc + 1
-        
-        print(str(exc) + " of " + str(number_files) + " images have been excluded.") 
-        print("Total number of patches loaded is %d."%len(train_loader))
-        return train_loader
+    
+      print(str(exc) + " of " + str(number_files) + " images have been excluded.") 
+      print("Total number of patches loaded is %d."%len(train_loader))
+      return train_loader
 
     #%% 
     def load_test(self):
