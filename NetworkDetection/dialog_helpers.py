@@ -315,7 +315,6 @@ def preview_segmentation(model, fused, divide_in_patches, diameter,
     # If the new patch_list differs from the previous one, we need to choose a new patch_nr.
     # This is for example the case when the user clicks the 'preview' button for
     # the first time, or if the user changed the width / height of the patch.
-    # We also want to change the patch_nr if change_patch_nr==True.
     if not(np.array_equal(new_patch_list, patch_list)):
         patch_nr = choose_random_patch_nr(new_patch_list) # because patch_nr is a global variable, it will now be updated throughout the whole script!
 
@@ -812,14 +811,14 @@ def choose_images_and_cellpose_model_with_gui(initial_dir):
     return img_list,model,do_measure_var.get()
 
 #%% 
-def choose_image_with_gui(initial_dir):
+def choose_image_with_gui(initial_dir, title):
     '''
     This function starts up a tkinter GUI which asks the user
     to open a tiff image.
     It outputs the path to the fused image (as a string).
     '''
     root = tk.Tk()
-    root.filename =  tk.filedialog.askopenfilename(initialdir = initial_dir,title = "Select fused RGB imge",filetypes = (('tif files','*.tif'),
+    root.filename =  tk.filedialog.askopenfilename(initialdir = initial_dir,title = title,filetypes = (('tif files','*.tif'),
                                                                                                                          ('png files','*.png')))
     path_to_fused_image = root.filename
     root.destroy() # close GUI

@@ -16,7 +16,7 @@ use_GPU = models.use_gpu()
 
 #%%
 @jit(nopython=True) # Function is compiled s.t. it runs in machine code
-def find_network(segmented,R=4):
+def find_network(segmented,max_num_cells=None,R=4):
     '''
     This function finds the cell-contact network corresponding to a segmented image.
     
@@ -25,7 +25,14 @@ def find_network(segmented,R=4):
         segmented (MxN numpy array)
         A segmented image, where each cell is labeled by a unique integer value.
         
-        R (int)
+        max_num_cells (int, default is None)
+        The maximum number of cells that may be expected to find in the network.
+        The network matrix will be of the size max_num_cells x max_num_cells.
+        This parameter is, for example, useful if you are detecting a developing
+        network over time. Then, max_num_cells is the number of cells on the first
+        timeframe, and the network matrix of all cells will have the same size.
+        
+        R (int, default is 4)
         Maximal distance between 2 neighbouring cells in pixels.
         
     OUTPUT
@@ -34,10 +41,13 @@ def find_network(segmented,R=4):
         Contact matrix. If network[i,j]=1, then the cells which are labeled with
         i+1, j+1 on the segmented image are connected.
     '''
-        
-    # Initialize network matrix:
+    
+    # Find size and the number of cells
     M,N = segmented.shape # segmented image has M rows and N columns
     num_cells = np.max(segmented) # number of cells in the segmented image
+    if not(max_num_cells==None):  # if the user entered a maximum number of cells
+        num_cells = max_num_cells
+    # Initialize network matrix:
     network = np.zeros((num_cells, num_cells))
     
     # Loop over all pixels of interest
