@@ -107,9 +107,7 @@ Once you click ```Continue```, the script will read **one of** the images you se
 
 - Check the parameter settings with the ```Preview``` button. This will show you the segmentation result for a single patch:
 
-<video width="320" height="240" controls>
-  <source src="assets/gif/Media1.mp4" type="video/mp4">
-</video>
+![](./assets/gif/CellposePreview.gif)
 
 ---
 
@@ -117,3 +115,4 @@ Once you click ```Continue```, the script will read **one of** the images you se
 
 ---
 
+- Once the script finished running (you can see the progress in the Anaconda Prompt),you are ready to [analyze the network measurements](network_analysis.md).
