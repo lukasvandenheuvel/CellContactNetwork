@@ -1,4 +1,4 @@
-name: cellpose
+name: ccn
 channels:
   - pytorch
   - anaconda
