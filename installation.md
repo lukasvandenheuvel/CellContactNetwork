@@ -7,7 +7,7 @@ Follow these instructions to install [ImageJ](https://imagej.nih.gov/ij/) on you
 - To activate the MIST update site, go to ```Help > Update...``` and click ```Manage update sites```. Here, search for the MIST checkbox, check it, and press ```Close```.
 
 <p align="center">
-  <img width="500" height="350" src="./assets/img/activateMIST.png")>
+  <img width="500" height="350" src="./assets/img/activateMIST.png">
 </p>
 
 - Press ```Apply changes``` and restart Fiji.
