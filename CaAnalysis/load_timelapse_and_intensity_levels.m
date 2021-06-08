@@ -1,6 +1,4 @@
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 
-function [I, background, foreground, meanI] = timelapse_to_intensity_levels(path_to_timelapse, segmentation)
+function [TL,I, background, foreground, meanI] = load_timelapse_and_intensity_levels(path_to_timelapse, segmentation)
     % --------------------------------------------------------------------
     % This function calculates the intensity levels over time of cells on a
     % timelapse video.
@@ -46,6 +44,11 @@ function [I, background, foreground, meanI] = timelapse_to_intensity_levels(path
     foreground = zeros(1, num_timepoints);  % foreground background level
     meanI = zeros(1, num_timepoints);       % mean intensity level of whole frames
     
+    % Init timelapse array
+    width = info(1).Width;
+    height = info(1).Height;
+    TL = zeros(num_timepoints, height, width); % timelapse
+    
     % Loop over timepoints
     for t=1:num_timepoints
         frame = imread(path_to_timelapse,t);
@@ -54,6 +57,7 @@ function [I, background, foreground, meanI] = timelapse_to_intensity_levels(path
         background(t) = mean2(frame(background_mask));
         foreground(t) = mean2(frame(foreground_mask));
         meanI(t) = mean2(frame);
+        TL(t,:,:) = frame;
     end
 end
 
