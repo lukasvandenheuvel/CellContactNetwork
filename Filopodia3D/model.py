@@ -179,8 +179,10 @@ class Unet3D(nn.Module):
                 union = ((predicted_filo + label) > 0).sum()
                 correct += intersection / union
                 predictions.append((input_img.cpu(), label, output.cpu()))
+                
+        acc = 100*correct / num_imgs
 
         print('final avg loss: ' + str(avg_loss / num_imgs))
-        print('final avg Jaccard index: ' + str(100*correct / num_imgs) + '%')
-        return predictions
+        print('final avg Jaccard index: ' + str(acc) + '%')
+        return predictions, avg_loss/num_imgs, (acc)
         

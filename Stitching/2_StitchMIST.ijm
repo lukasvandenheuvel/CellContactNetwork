@@ -11,25 +11,24 @@
 //
 //---------------------------START FUNCTIONS-----------------------------
 
-function number_to_string(nr, three_numbers){
+function number_to_string(nr, min_length){
 	//------------------------------------------------------
 	// This function converts an integer nr into a string.
-	// Examples: 0 --> "00", 3 --> "03", 11 --> "11", 102 --> "102".
-	// If three_numbers == true:
-	// Examples: 0 --> "000", 3 --> "003", 11 --> "011", 102 --> "102".
+	// Examples: 
+	// if min_length is 2:
+	// 0 --> "00", 3 --> "03", 11 --> "11", 102 --> "102".
+	// If min_length is 3:
+	// 0 --> "000", 3 --> "003", 11 --> "011", 102 --> "102".
 	//------------------------------------------------------
-	
-	if ((nr < 10) && three_numbers){
-		nr_string = "00" + d2s(nr, 0);
-	}
-	else if ((nr < 10) && !three_numbers){
-		nr_string = "0" + d2s(nr, 0);
-	}
-	else if ((nr > 9) && (nr < 100) && three_numbers){
-		nr_string = "0" + d2s(nr, 0);
-	}
-	else{
-		nr_string = d2s(nr, 0);
+
+	nr_string = d2s(nr,0);
+	number_of_zeros_to_add = min_length - lengthOf(nr_string);
+	if (number_of_zeros_to_add>0){
+		zeros = "";
+		for (i = 0; i < number_of_zeros_to_add; i++) {
+			zeros = zeros + "0";
+		}
+		nr_string = zeros + nr_string;
 	}
 	return nr_string;
 }
@@ -62,7 +61,7 @@ function check_if_tile_nr_is_present(nr,file_list){
 	// then the output is present=true.
 	//------------------------------------------------------
 	present = false;
-	tile_name = "tile_" + number_to_string(nr, true);
+	tile_name = "tile_" + number_to_string(nr, 3);
 	for (i = 0; i < file_list.length; i++) {
 		file = file_list[i];
 		if (indexOf(file, tile_name) == 0){

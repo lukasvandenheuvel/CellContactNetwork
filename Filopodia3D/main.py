@@ -84,6 +84,9 @@ def fit_3D_unet(path,
     losses = []
     accs = []
     
+    losses_test = []
+    accs_test = []
+    
     for n in range(n_epoch):
         for i in range(div):
             
@@ -94,16 +97,22 @@ def fit_3D_unet(path,
                 subset_img = subset_img.cuda()
                 subset_label = subset_label.cuda()
             avg_loss, acc = model.train(subset_img, subset_label, batch_size, optimizer, loss_fun)
+            _, avg_loss_test, acc_test = model.test(test_images, test_labels, loss_fun)
         
             # Copy average loss value to host memory and convert to numpy.
             # Use .detatch() to make sure the loss tensor does not require a gradient.
             if avg_loss.is_cuda:
                 avg_loss = avg_loss.cpu().detach().numpy()
+                avg_loss_test = avg_loss_test.cpu().detach().numpy()
             else:
                 avg_loss = avg_loss.detach().numpy()
+                avg_loss_test = avg_loss_test.detach().numpy()
             
             losses.append(avg_loss)
             accs.append(acc)
+            
+            losses_test.append(avg_loss_test)
+            accs_test.append(acc_test)
             
         print('Epoch {e} (of {n}): loss = {l:.2f}, Jaccard index = {a:.2f}%.'.format(e=n+1, n=n_epoch, l=avg_loss, a=acc))
 
@@ -111,9 +120,9 @@ def fit_3D_unet(path,
     predictions = []
     if test:
         print('Testing...')
-        predictions = model.test(test_images, test_labels, loss_fun)
+        predictions, _, _ = model.test(test_images, test_labels, loss_fun)
 
-    return model, losses, accs, predictions
+    return model, losses, accs, losses_test, accs_test, predictions
 
 #%%--------------------------------PARAMETERS---------------------------------
 
@@ -122,7 +131,7 @@ path = './data/data_set'
 
 # Training parameters
 batch_size = 2
-n_epoch = 1500
+n_epoch = 2500
 learning_rate = 0.0001
 momentum = 0.99
 num_channels = 3
@@ -142,7 +151,7 @@ torch.cuda.empty_cache()
 
 # Do training
 tic = time.perf_counter()
-net, losses, accs, predictions = fit_3D_unet(path,
+net, losses, accs, losses_test, accs_test, predictions = fit_3D_unet(path,
                                              learning_rate, momentum, n_epoch, batch_size,
                                              num_channels=num_channels,
                                              fov=fov, overlap=overlap, z_stack=z_stack, min_slice=min_slice,
@@ -174,7 +183,12 @@ for i in range(len(predictions)):
     io.imsave(lbl_out, label)
     io.imsave(img_out, img)
 
-result_dict = {'losses': losses, 'accuracies': accs}
+result_dict = {'losses_train': losses, 
+               'accuracies_train': accs,
+               'losses_test': losses_test,
+               'accuracies_test': accs_test}
+
 path_to_losses = os.path.join('./models', 'filo3D_d' + date + '_t' + time + '.pkl')
 with open(path_to_losses, "wb") as tf:
     pickle.dump(result_dict,tf)
+    

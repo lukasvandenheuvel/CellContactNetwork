@@ -65,7 +65,7 @@ def load_dataset_old(input_path, target_path, num_load, num_channels, input_dim)
     target_3D = torch.zeros([num_load, 1] + input_dim, dtype = torch.float64)
 
     # loop through entire data folder
-    for i in range(num_load): 
+    for i in range(num_load):  
     
         input_img = Image.open(input_path + '/' + str(i) + '.tif')
         target_img = Image.open(target_path + '/' + str(i) + '.tif')
@@ -144,7 +144,7 @@ class DataLoader():
       count = 0
     
       # loop through entire data folder
-      for i in range(number_files):
+      for i in range(number_files): 
     
         img = Image.open(input_path + '/' + str(i) + '.tif')
         target = Image.open(target_path + '/' + str(i) + '.tif')

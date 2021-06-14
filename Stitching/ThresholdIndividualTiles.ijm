@@ -288,17 +288,24 @@ function find_ch_operation_boolean(nr_channels, ch_operation_string){
 
 }
 
-function number_to_string(nr){
+function number_to_string(nr, min_length){
 	//------------------------------------------------------
 	// This function converts an integer nr into a string.
-	// Examples: 0 --> "00", 3 --> "03", 11 --> "11", 102 --> "102".
+	// Examples: 
+	// if min_length is 2:
+	// 0 --> "00", 3 --> "03", 11 --> "11", 102 --> "102".
+	// If min_length is 3:
+	// 0 --> "000", 3 --> "003", 11 --> "011", 102 --> "102".
 	//------------------------------------------------------
-	
-	if (nr < 10){
-		nr_string = "0" + d2s(nr, 0);
-	}
-	else{
-		nr_string = d2s(nr, 0);
+
+	nr_string = d2s(nr,0);
+	number_of_zeros_to_add = min_length - lengthOf(nr_string);
+	if (number_of_zeros_to_add>0){
+		zeros = "";
+		for (i = 0; i < number_of_zeros_to_add; i++) {
+			zeros = zeros + "0";
+		}
+		nr_string = zeros + nr_string;
 	}
 	return nr_string;
 }
@@ -331,7 +338,7 @@ function get_img_file_name(file0, well, nr, ch){
 	//------------------------------------------------------
 	
 	parts = split(file0, "_");
-	nr_string = number_to_string(nr);
+	nr_string = number_to_string(nr,2);
 	file_name = parts[0] + "_" + parts[1] + "_" + well + "f" + nr_string + "d" + d2s(ch,0) + ".TIF";
 	return file_name;
 }
@@ -354,6 +361,7 @@ function get_img_file_name(file0, well, nr, ch){
 #@ int(label="rolling ball radius") rolling_ball_radius
 #@ boolean (label="Do you want to downscale (with a factor 2)?") down
 
+q = File.separator;
 inputFolder = raw + "/" + well;
 wellFolder = root + "/" + well;
 tileFolder = wellFolder + "/tiles"; 
@@ -429,11 +437,10 @@ for(i = 0; i < img_nrs.length; i++){
 
 	// Give the image the correct tile number.
 	// This number is based on the column grid.
-	img_nr = parseInt(img_nrs[i]);  // spiral index corresponding with (x,y) position
-	tile_nr = spiral_to_column(img_nr, w, clockwise);
+	img_nr = parseInt(img_nrs[i]);  // column index corresponding with (x,y) position
+	tile_nr = column_to_spiral(img_nr, w, clockwise);  // spiral index corresponding with (x,y) position
 	
-	tile_nr_string = number_to_string(tile_nr);
-	tile_name = "tile_" + tile_nr_string;
+	img_nr_string = number_to_string(img_nr,3);
 	
 	// Initialize arrays with filenames and channel numbers.
 	// They will later be used to merge the channels.
@@ -445,7 +452,10 @@ for(i = 0; i < img_nrs.length; i++){
 	
 	// Loop over the channels in the image
 	for (ch = 0; ch < nr_channels; ch++){
-		file_name = get_img_file_name(file0, well, img_nr, ch);
+	
+		tile_name = "tile_" + img_nr_string + "_ch" + d2s(ch,0);
+
+		file_name = get_img_file_name(file0, well, tile_nr, ch);
 		file_names[ch] = file_name;
 		ch_counts[ch] = "c" + d2s(ch+1,0);
 		
@@ -486,15 +496,11 @@ for(i = 0; i < img_nrs.length; i++){
 			setOption("BlackBackground", true);
 			run("Convert to Mask");
 			threshold_counter = threshold_counter + 1;
-		}
-	}
 
-	if(threshold_counter > 0){
-		// Merge the thresholded images
-		run("Merge Channels...", ch_th_string + "create");
-		save(thresholdedTileFolder + "/" + tile_name + ".tif");
-		// Close the thresholded images
-		close("*");
+			// Save and close
+			save(thresholdedTileFolder + q + tile_name + ".tif");
+			close("*");
+		}
 	}
 	
 }	
