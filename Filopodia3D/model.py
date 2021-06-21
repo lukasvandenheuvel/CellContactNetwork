@@ -51,6 +51,24 @@ def crop_img(tensor, target_tensor):
     return tensor[:, :, delta_xy:tensor_size_xy-delta_xy, delta_xy:tensor_size_xy-delta_xy, delta_z:tensor_size_z-delta_z]
 
 #%%
+def calculate_jaccard_index(prediction, label):
+    '''
+    Calculates the Jaccard index of prediction and label.
+    J = intersection(A,B) / union(A,B)
+    '''
+    
+    intersection = (prediction * label).sum()
+    union = ((prediction + label) > 0).sum()
+    # If the union is 0, the Jaccard index is 100%. 
+    # The image is correctly classified as all background.
+    if union==0 and intersection==0:
+        J = 1
+    else:
+        J = intersection / union
+    return J
+    
+
+#%%
 # 3D unet architecture
 class Unet3D(nn.Module):
     ''' 3DUnet; input [1, 1, 132, 132, 124] ; return [1, 44, 44, 36]'''
@@ -127,7 +145,10 @@ class Unet3D(nn.Module):
             input_img = train_images[indices,:,:,:,:]
             label = train_labels[indices,:,:,:]
             
-            optimizer.zero_grad()       
+            # Set the gradients of all model parameters to 0.
+            # If we don't do this, Pytorch accumulates the gradients on subsequent backward passes.
+            optimizer.zero_grad()
+            
             # forward + backward + optimize
             output = self.forward(input_img.float())      
             loss = criterion(output, label.long())
@@ -137,12 +158,8 @@ class Unet3D(nn.Module):
             # keep track of loss and accuracy
             avg_loss += loss
             num_iterations += 1
-            
             predicted_filo = (output[:,1,:,:,:] > 0.5) # binarize the second channel (filo)
-            correctly_predicted = (predicted_filo == label).sum()
-            intersection = (predicted_filo * label).sum()
-            union = ((predicted_filo + label) > 0).sum()
-            correct += intersection / union
+            correct += calculate_jaccard_index(predicted_filo, label)
             
         acc = 100 * correct / (num_iterations)            
 
@@ -151,10 +168,9 @@ class Unet3D(nn.Module):
 
     def test(self, test_images, test_labels, criterion ):
 
-        with torch.no_grad():
+        with torch.no_grad(): # omitting the gradient saves a lot of memory
             avg_loss = 0
             correct = 0
-            total = 0 
             num_imgs = test_images.size()[0]
             predictions = []
     
@@ -164,20 +180,17 @@ class Unet3D(nn.Module):
                 if torch.cuda.is_available():
                     input_img = input_img.cuda()
                     label = label.cuda()
-                    
+                
+                # Do a forward pass
                 output = self.forward(input_img.float())
                 loss = criterion(output, label.long())
     
                 # keep track of loss and accuracy
                 avg_loss += loss
                 _, predicted = torch.max(output.data, 1)
-                total += label.size(0)
                 
                 predicted_filo = (output[:,1,:,:,:] > 0.5) # binarize the second channel (filo)
-                correctly_predicted = (predicted_filo == label).sum()
-                intersection = (predicted_filo * label).sum()
-                union = ((predicted_filo + label) > 0).sum()
-                correct += intersection / union
+                correct +=  calculate_jaccard_index(predicted_filo, label)
                 predictions.append((input_img.cpu(), label, output.cpu()))
                 
         acc = 100*correct / num_imgs

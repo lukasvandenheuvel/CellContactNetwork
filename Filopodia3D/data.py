@@ -48,64 +48,6 @@ def edeform(input_tensor, target_tensor):
     return input_deformed1, target_deformed1
 
 #%%
-def load_dataset_old(input_path, target_path, num_load, num_channels, input_dim):
-
-    '''
-    Initialize loader for the training data and ground truth data
-    List of data input containing tuples (input, label), input is 5D tensor, label is 4D tensor
-    T = 'Train' or 'Test'
-    device = 'cpu' or 'gpu'
-    '''
-
-    # intialise torch transformation to tensor
-    transform_totens = transforms.Compose([transforms.ToTensor()])
-    
-    # initialize placeholders for output images and targets
-    input_3D = torch.zeros([num_load, num_channels] + input_dim, dtype = torch.float64) #dtype int16 /
-    target_3D = torch.zeros([num_load, 1] + input_dim, dtype = torch.float64)
-
-    # loop through entire data folder
-    for i in range(num_load):  
-    
-        input_img = Image.open(input_path + '/' + str(i) + '.tif')
-        target_img = Image.open(target_path + '/' + str(i) + '.tif')
-        
-        width, height = input_img.size
-        depth = input_img.n_frames
-
-        # initialize placeholder tensors for input an target stacks
-        in_t = torch.zeros([1, num_channels, height, width, depth], dtype = torch.float64)
-        tar_t = torch.zeros([1, 1, height, width, depth], dtype = torch.float64)        
-
-        for j in range(depth): 
-
-            input_img.seek(j)                      
-            target_img.seek(j)
-            in_t[:, :, :, :, j] = transform_totens(input_img)
-            tar_t[:, :, :, :, j] = transform_totens(target_img)
-    
-        # Interpolate in z-direction to get the desired depth
-        in_interpolation = F.interpolate(in_t, size = input_dim)
-        tar_interpolation = F.interpolate(tar_t, size = input_dim)
-
-        # 0 = Background
-        tar_interpolation = torch.where(tar_interpolation <= 30, 0, 0)
-        # 1 = Cell body
-        tar_interpolation = torch.where(torch.logical_and(tar_interpolation > 30, tar_interpolation < 70), 1, tar_interpolation.long())
-        # 2 = Filopodia
-        tar_interpolation = torch.where(tar_interpolation >= 70, 2, tar_interpolation.long())
-
-        #train_loader.append((input_3D, target_3D))
-        input_3D[i,:,:,:,:] = in_interpolation
-        target_3D[i,:,:,:,:] = tar_interpolation
-        
-    if torch.cuda.is_available():
-        input_3D = input_3D.cuda()
-        target_3D = target_3D.cuda()
-
-    return input_3D,target_3D.squeeze(1)
-
-#%%
 
 class DataLoader():
     def __init__(self, path, field_size, overlap, z_stack, min_slice):
@@ -267,7 +209,7 @@ class DataLoader():
                 
                 # tensors to store patches
                 input_3D = torch.zeros([1, 3, self.field_size, self.field_size, self.z_stack], dtype = torch.float64)
-                breakpoint()
+               # breakpoint()
                 for j in range(0,depth):
                 
                     # DAPI channel
@@ -285,17 +227,23 @@ class DataLoader():
                     input_np = self.normalize_image( np.array(img) )
                     in_t[2, :, :, j]  = transform_totens(input_np)
                     
-                    w = [int(windows[0]), int(windows[1])]
-                    for k in range(w[0]):
-                        for l in range(w[1]):
+                w = [int(windows[0]), int(windows[1])]
+                for k in range(w[0]):
+                    for l in range(w[1]):
                         
-                          win = in_t[:, l * (self.field_size - self.overlap) : (l+1) * self.field_size - l * self.overlap, k * (self.field_size - self.overlap) : (k+1) * self.field_size - k * self.overlap, :]
-                          win = win.unsqueeze(0)  
-                          # interpolate in z-direction to get the desired depth
-                          # input_3D = F.interpolate(win, size = [self.field_size, self.field_size, self.z_stack])                        
-                          # Append data, target pair in a trainloader
-                          input_3D = win
-                          test_loader.append(input_3D) 
+                      m0 = l * (self.field_size - self.overlap)
+                      m1 = (l+1) * self.field_size - l * self.overlap
+                      n0 = k * (self.field_size - self.overlap)
+                      n1 = (k+1) * self.field_size - k * self.overlap
+                      
+                      win = in_t[:, m0 : m1, n0 : n1, :]
+                      win = win.unsqueeze(0)  
+                      # interpolate in z-direction to get the desired depth
+                      input_3D = F.interpolate(win, size = [self.field_size, self.field_size, self.z_stack])                        
+                      # Append data, target pair in a trainloader
+                      # input_3D = win
+                      coordinates = [i, k, l] # img nr, x_window, y_window
+                      test_loader.append((input_3D, coordinates)) 
                 
             else:
                 exc = exc + 1
