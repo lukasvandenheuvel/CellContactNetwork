@@ -8,6 +8,7 @@ Created on Mon Mar 15 10:04:40 2021
 #%%
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 from skimage import io
 from skimage import measure
@@ -15,7 +16,7 @@ from scipy import sparse
 from scipy.io import savemat
 
 from dialog_helpers import choose_images_and_cellpose_model_with_gui,choose_cellpose_parameters_with_gui
-from segment_cellpose_helpers import find_network,cellpose_segment,remove_small_cells,segment_fused_image_with_cellpose
+from segment_cellpose_helpers import find_network,cellpose_segment,remove_small_cells,segment_fused_image_with_cellpose,get_image_dimensions
 
 from cellpose import models
 use_GPU = models.use_gpu()
@@ -46,6 +47,59 @@ def save_metadata_file(metadata_file_path, metadata):
     return n
 
 #%%
+def load_images_to_preview(img_list):
+    '''
+    This function loads a set of images that we want to preview.
+    If the image is very large (a fused image), we only want to read one image
+    (since it takes so much time), and then show different patches from the fused image.
+    
+    If the image is small enough and we have more of them, we are loading them all
+    s.t. the user can preview them.
+    
+    INPUTS
+    ------
+    img_list (list of tuples)
+    List of paths to images that the user wants to segment. 
+    The first entry in each tuple is the path to image, the second is the path
+    where we want the output to be stored.
+    
+    
+    OUTPUT
+    ------
+    preview_images (list of numpy arrays)
+    List of images to preview.
+    
+    divide_in_patches (bool)
+    Is true if the first input image is larger than 1200 pixels in height, and
+    false otherwise.
+    '''
+    print('>>>> READING FIRST IMAGE. THIS MAY TAKE SOME TIME...')
+    preview_images = [io.imread(img_list[0][0])]
+    
+    # Check the input dimensions of the image. if the fused image is larger than 1200 pixels in height,
+    # we are going to divide it in patches. If it isn't, the images in img_list will be the patch list.
+    divide_in_patches = False
+    [M,N,C] = get_image_dimensions(preview_images[0])
+    
+    if (M > 1200): # if the image is large, we are going to divide it in patches.
+        divide_in_patches = True
+    else:          # if the image is small, we are going to read all images in the folder.
+        # Read all images in the folder
+        for ii in range(1,len(img_list)):
+            if ii==1:
+                print('>>>> READING ALL OTHER IMAGES. THIS MAY TAKE SOME TIME...')
+            filename = img_list[ii][0]
+            img = io.imread(filename)
+            [M_new,N_new,C_new] = get_image_dimensions(img)
+            # Raise error if the newly read image has different dimensions
+            if not([M_new,N_new,C_new] == [M,N,C]):
+                raise ValueError("Fatal error: the images to segment must all have the same dimensions!")
+            preview_images.append(img)
+            
+    return preview_images,divide_in_patches
+    
+
+#%%
 # ----------------------------SPECIFY PARAMETERS-------------------------------
 
 # Cell properties to measure
@@ -62,13 +116,12 @@ initial_dir = r'M:\tnw\bn\dm\Shared'
 patch_nr = None 
 # Choose images and parameters with TKInter GUI
 img_list,model,do_measurements = choose_images_and_cellpose_model_with_gui(initial_dir)
+# Load the images you want to previews
+preview_images,divide_in_patches = load_images_to_preview(img_list)
 
-print('>>>> READING FIRST RGB IMAGE. THIS MAY TAKE SOME TIME...')
-fused = io.imread(img_list[0][0])
-
-[divide_in_patches, patch_width, patch_height, edge_thickness, similarity_threshold,  
+[patch_width, patch_height, edge_thickness, similarity_threshold,  
      cell_distance, minimal_cell_size, channels, cell_diameter, num_cpu_cores, 
-     parameters_as_string] = choose_cellpose_parameters_with_gui(model,fused,do_measurements)
+     parameters_as_string] = choose_cellpose_parameters_with_gui(model,preview_images,divide_in_patches,predict_network=do_measurements)
 
 #%%
 # -------------------------------START CODE------------------------------------
@@ -108,17 +161,19 @@ ii = 0
 for (filename,output_path) in img_list:
 
     directory = os.path.split(filename)[0]
-    file_name = os.path.split(filename)[1].split('.')[0]
+    filename_without_extension = os.path.split(filename)[1].split('.')[0]
     
     # Save metadata file
-    metadata_file = file_name + '_cellpose_parameters_'+model_name+'.txt'
-    metadata_file_path = os.path.join(directory, metadata_file)
+    metadata_file = filename_without_extension + '_cellpose_parameters_'+model_name+'.txt'
+    metadata_file_path = os.path.join(output_path, metadata_file)
     saved = save_metadata_file(metadata_file_path, parameters_as_string)
-    print('>>>> SAVED METADATA FILE IN ' + directory + '.')
+    print('>>>> SAVED METADATA FILE IN ' + output_path + '.')
     
-    print('>>>> READING FUSED IMAGE IN ' + directory + '...')
-    if (ii>0): # The first fused image in the list is already loaded.
+    if (ii>=len(preview_images)): # If the fused image is not yet loaded.
+        print('>>>> READING FUSED IMAGE IN ' + output_path + '...')
         fused = io.imread(filename)
+    else:
+        fused = preview_images[ii]
     
     # Do the cellpose segmentation
     if divide_in_patches:
@@ -150,13 +205,13 @@ for (filename,output_path) in img_list:
     # Save results
     print('>>>> SAVING OUTPUT...')
     
-    output_seg = file_name + '_cellpose_segmentation_'+model_name+'.tif'
+    output_seg = filename_without_extension + '_cellpose_segmentation_'+model_name+'.tif'
     segmentation_output_path = os.path.join(output_path, output_seg)
     io.imsave(segmentation_output_path, segmented)
     print('>>>> Segmentation is saved succesfully as ' + segmentation_output_path)
     
     if do_measurements:
-        output_netw = file_name + '_network_'+model_name+'.mat'
+        output_netw = filename_without_extension + '_network_'+model_name+'.mat'
         network_output_path = os.path.join(output_path, output_netw)
         savemat(network_output_path, mdic)  
         print('>>>> Network is saved succesfully as ' + network_output_path)

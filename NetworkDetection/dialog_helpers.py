@@ -247,7 +247,7 @@ def show_one_segmentation(model_type, patch, diameter, channels, cell_size_thres
     f.show()
     
 #%%
-def preview_segmentation(model, fused, divide_in_patches, diameter, 
+def preview_segmentation(model, preview_images, divide_in_patches, diameter, 
                          patch_height, patch_width, cyto_ch_str, nucleo_ch_str,
                          cell_size_threshold, cell_distance, predict_network):
     '''
@@ -263,8 +263,8 @@ def preview_segmentation(model, fused, divide_in_patches, diameter,
         weights of a custom-trained model. An example of such a file is  
         "cellpose_residual_on_style_on_concatenation_off_Cellpose_2021_05_04.236206"
     
-        fused (MxNxC numpy array)
-        Image to segment.
+        preview_images (list of MxNxC numpy arrays)
+        Image(s) to segment.
         
         diameter (float)
         Cellpose cell diameter. If the model is custom-built, then diameter=None.
@@ -298,19 +298,23 @@ def preview_segmentation(model, fused, divide_in_patches, diameter,
     screen_height,screen_width = get_display_size()
     channels = find_channels(model, cyto_ch_str, nucleo_ch_str)
   
-    [M,N,C] = get_image_dimensions(fused)
-    if (C==1): # if fused is grayscale, unsqueeze it
-        fused = np.reshape(fused, (M,N,1))
+    # if images are grayscale, unsqueeze them
+    [M,N,C] = get_image_dimensions(preview_images[0])
+    if (C==1): 
         outline_color = [255]
         cmap = 'gray'
+        for ii,img in enumerate(preview_images):
+            preview_images[ii] = np.reshape(img, (M,N,1))
+        
     overlap = int(patch_height/2)
 
     # Divide the fused image into patches if the user asked to do so.
     if divide_in_patches:
+        fused = preview_images[0]
         [fused, patch_locations] = enlarge_fused_image(fused, patch_height=patch_height, patch_width=patch_width, overlap=overlap)
         new_patch_list = fused_to_patches(fused, patch_locations, patch_height=patch_height, patch_width=patch_width)
     else:
-        new_patch_list = [fused]
+        new_patch_list = preview_images
     
     # If the new patch_list differs from the previous one, we need to choose a new patch_nr.
     # This is for example the case when the user clicks the 'preview' button for
@@ -325,8 +329,8 @@ def preview_segmentation(model, fused, divide_in_patches, diameter,
     
     # Show a button to change the patch number
     master = tk.Tk()
-    x_left = int( screen_width - 300)
-    y_top = int( screen_height - 300)
+    x_left = int( screen_width - 300 )
+    y_top = int( screen_height - 300 )
     master.geometry("{}x{}+{}+{}".format(200,100,x_left,y_top))
     
     B1 = tk.Button(master, text='Show different patch', command=lambda:change_patch_nr(model, patch_list, diameter, channels, cell_size_threshold, cell_distance, predict_network), bg="yellow")
@@ -348,7 +352,11 @@ def change_patch_nr(model, patch_list, diameter, channels, cell_size_threshold, 
     Then, it shows the new patch.
     '''
     global patch_nr
-    patch_nr = choose_random_patch_nr(patch_list) # because patch_nr is a global variable, it will now be updated throughout the whole script!
+    new_patch_nr = choose_random_patch_nr(patch_list) 
+    # Make sure the new patch nr is not the same as the old one, unless there is only one patch
+    while (new_patch_nr==patch_nr and len(patch_list)>1):
+        new_patch_nr = choose_random_patch_nr(patch_list)
+    patch_nr = new_patch_nr # because patch_nr is a global variable, it will now be updated throughout the whole script!
     show_one_segmentation(model, patch_list[patch_nr], diameter, channels, cell_size_threshold, cell_distance, predict_network)
 
 #%%
@@ -371,7 +379,7 @@ def change_outline_color(model, patch_list, diameter, channels, cell_size_thresh
     
     
 #%%
-def choose_cellpose_parameters_with_gui(model,fused,predict_network=True):
+def choose_cellpose_parameters_with_gui(model,preview_images,divide_in_patches,predict_network=True):
     '''
     This function starts up a TKInter graphical user interface to choose all parameters.
     
@@ -383,8 +391,8 @@ def choose_cellpose_parameters_with_gui(model,fused,predict_network=True):
         weights of a custom-trained model. An example of such a file is  
         "cellpose_residual_on_style_on_concatenation_off_Cellpose_2021_05_04.236206"
         
-        fused (MxNxC numpy array)
-        Image to segment.
+        preview_images ( list of MxNxC numpy arrays )
+        Image(s) to segment.
     
     OUTPUTS
     -------
@@ -427,41 +435,73 @@ def choose_cellpose_parameters_with_gui(model,fused,predict_network=True):
     # the button "preview".
     global patch_nr
     
-    [M,N,C] = get_image_dimensions(fused)
+    [M,N,C] = get_image_dimensions(preview_images[0])
     
     gui = tk.Tk()
-    gui.geometry("{}x{}+{}+{}".format(600,400,50,50))
+    gui.geometry("{}x{}+{}+{}".format(800,650,50,50))
     
     # SPECIFY PARAMETERS #####################################################
     ypos = 10 # initial y position of text on dialog
     tk.Label(gui, text="The selected image consists of %dx%d pixels, and has %d channels."%(M,N,C)).place(x=10,y=ypos)
     
-    # Choose whether to divide the fused image in patches
-    ypos = ypos + 30
-    divide_in_patches_var = tk.IntVar()
-    divide_in_patches_button = tk.Checkbutton(gui, text='Divide fused in patches', variable=divide_in_patches_var)
-    divide_in_patches_button.grid(row=0, sticky=tk.W)
-    divide_in_patches_button.place(x=10,y=ypos)
-    # if the fused image is larger than 1200 pixels in height, select this checkbox by default
-    if (M > 1200):
-        divide_in_patches_button.select()
+    # Parameters specific to calculation of overlap between patches:
+    if divide_in_patches:
+        
+        ypos = ypos + 20 
+        tk.Label(gui, text="The image is large, and will therefore be processed in patches.").place(x=10,y=ypos)
+        ypos = ypos + 30 
+        tk.Label(gui, text="PATCH PARAMETERS --------------------------------------").place(x=10,y=ypos)
 
-    ypos = ypos + 30
-    patch_width = tk.IntVar(value=1024)
-    tk.Label(gui, text="Patch width:").place(x=10,y=ypos)
-    tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
-    entry_width = tk.Entry(gui, textvariable=patch_width)
-    entry_width.grid(row=0, sticky=tk.W)
-    entry_width.place(x=200,y=ypos,width=90)
+        ypos = ypos + 30
+        patch_width = tk.IntVar(value=1024)
+        tk.Label(gui, text="Patch width:").place(x=10,y=ypos)
+        tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
+        entry_width = tk.Entry(gui, textvariable=patch_width)
+        entry_width.grid(row=0, sticky=tk.W)
+        entry_width.place(x=200,y=ypos,width=90)
+        
+        ypos = ypos + 30
+        patch_height = tk.IntVar(value=1024)
+        tk.Label(gui, text="Patch height:").place(x=10,y=ypos)
+        tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
+        entry_height = tk.Entry(gui, text='Patch height:', textvariable=patch_height)
+        entry_height.grid(row=0, sticky=tk.W)
+        entry_height.place(x=200,y=ypos,width=90)
+        
+        ypos = ypos + 30
+        edge_thickness = tk.IntVar(value=60)
+        tk.Label(gui, text="Size of edge region:").place(x=10,y=ypos)
+        tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
+        entry_thickness = tk.Entry(gui, textvariable=edge_thickness)
+        entry_thickness.grid(row=0, sticky=tk.W)
+        entry_thickness.place(x=200,y=ypos,width=90)
+        
+        ypos = ypos + 30
+        similarity_threshold = tk.DoubleVar(value=0.7)
+        tk.Label(gui, text="Cell similarity threshold:").place(x=10,y=ypos)
+        tk.Label(gui, text="(cells with sufficient similarity are merged)").place(x=300,y=ypos)
+        entry_similarity = tk.Entry(gui, textvariable=similarity_threshold)
+        entry_similarity.grid(row=0, sticky=tk.W)
+        entry_similarity.place(x=200,y=ypos,width=90)
+        
+        ypos = ypos + 30
+        num_cores = tk.IntVar(value=0)
+        tk.Label(gui, text="Number of CPU cores:").place(x=10,y=ypos)
+        tk.Label(gui, text="(set to 0 to leave 2 cores available and use the rest)").place(x=300,y=ypos)
+        entry_cores = tk.Entry(gui, textvariable=num_cores)
+        entry_cores.grid(row=0, sticky=tk.W)
+        entry_cores.place(x=200,y=ypos,width=90)
+        
+    else:
+        patch_width = tk.IntVar(value=None)
+        patch_height = tk.IntVar(value=None)
+        edge_thickness = tk.IntVar(value=None)
+        similarity_threshold = tk.DoubleVar(value=None)
+        num_cores = tk.IntVar(value=None)
     
-    ypos = ypos + 30
-    patch_height = tk.IntVar(value=1024)
-    tk.Label(gui, text="Patch height:").place(x=10,y=ypos)
-    tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
-    entry_height = tk.Entry(gui, text='Patch height:', textvariable=patch_height)
-    entry_height.grid(row=0, sticky=tk.W)
-    entry_height.place(x=200,y=ypos,width=90)
-    
+    # Parameters which are always necessary
+    ypos = ypos + 30 
+    tk.Label(gui, text="CHANNELS AND CELL SIZE -------------------------------").place(x=10,y=ypos)
     ypos = ypos + 30
     # The default strings for nucleus and cytoplasm channels depend on the model,
     # and on the image type (gray or RGB)
@@ -490,63 +530,56 @@ def choose_cellpose_parameters_with_gui(model,fused,predict_network=True):
     entry_nucleo_ch.grid(row=0, sticky=tk.W)
     entry_nucleo_ch.place(x=200,y=ypos,width=90)
     
-    diameter_var = tk.IntVar(value=60)
-    if (model=='cyto' or model=='nuclei'):
-        ypos = ypos + 30
-        tk.Label(gui, text="Cellpose cell diameter:").place(x=10,y=ypos)
-        tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
-        entry_diameter = tk.Entry(gui, textvariable=diameter_var)
-        entry_diameter.grid(row=0, sticky=tk.W)
-        entry_diameter.place(x=200,y=ypos,width=90)
-    
     ypos = ypos + 30
-    edge_thickness = tk.IntVar(value=60)
-    tk.Label(gui, text="Size of edge region:").place(x=10,y=ypos)
-    tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
-    entry_thickness = tk.Entry(gui, textvariable=edge_thickness)
-    entry_thickness.grid(row=0, sticky=tk.W)
-    entry_thickness.place(x=200,y=ypos,width=90)
-    
-    ypos = ypos + 30
-    similarity_threshold = tk.DoubleVar(value=0.7)
-    tk.Label(gui, text="Cell similarity threshold:").place(x=10,y=ypos)
-    tk.Label(gui, text="(cells with sufficient similarity are merged)").place(x=300,y=ypos)
-    entry_similarity = tk.Entry(gui, textvariable=similarity_threshold)
-    entry_similarity.grid(row=0, sticky=tk.W)
-    entry_similarity.place(x=200,y=ypos,width=90)
-    
-    cell_distance_var = tk.IntVar(value=8)
-    if predict_network:
-        ypos = ypos + 30
-        tk.Label(gui, text="Max distance separating cells:").place(x=10,y=ypos)
-        tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
-        entry_distance = tk.Entry(gui, textvariable=cell_distance_var)
-        entry_distance.grid(row=0, sticky=tk.W)
-        entry_distance.place(x=200,y=ypos,width=90)
-    
-    ypos = ypos + 30
-    minimal_cell_size = tk.IntVar(value=500)
+    minimal_cell_size = tk.IntVar(value=200)
     tk.Label(gui, text="Minimal cell area:").place(x=10,y=ypos)
     tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
     entry_minsize = tk.Entry(gui, textvariable=minimal_cell_size)
     entry_minsize.grid(row=0, sticky=tk.W)
     entry_minsize.place(x=200,y=ypos,width=90)
+   
+    # Parameter specific to Cellpose model (diameter)
+    if (model=='cyto' or model=='nuclei'):
+        
+        ypos = ypos + 30 
+        tk.Label(gui, text="CELLPOSE DIAMETER -------------------------------------").place(x=10,y=ypos)
     
-    ypos = ypos + 30
-    num_cores = tk.IntVar(value=0)
-    tk.Label(gui, text="Number of CPU cores:").place(x=10,y=ypos)
-    tk.Label(gui, text="(set to 0 to leave 2 cores available and use the rest)").place(x=300,y=ypos)
-    entry_cores = tk.Entry(gui, textvariable=num_cores)
-    entry_cores.grid(row=0, sticky=tk.W)
-    entry_cores.place(x=200,y=ypos,width=90)
+        ypos = ypos + 30
+        diameter_var = tk.IntVar(value=60)
+        tk.Label(gui, text="Cellpose cell diameter:").place(x=10,y=ypos)
+        tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
+        entry_diameter = tk.Entry(gui, textvariable=diameter_var)
+        entry_diameter.grid(row=0, sticky=tk.W)
+        entry_diameter.place(x=200,y=ypos,width=90)
+    else:
+        diameter_var = tk.IntVar(value=None)
+    
+    
+    # Parameters specific to network detection
+    
+    if predict_network:
+        
+        ypos = ypos + 30 
+        tk.Label(gui, text="NETWORK DETECTION PARAMETERS ---------------------------").place(x=10,y=ypos)
+        
+        ypos = ypos + 30
+        cell_distance_var = tk.IntVar(value=8)
+        tk.Label(gui, text="Max distance separating cells:").place(x=10,y=ypos)
+        tk.Label(gui, text="(pixels)").place(x=300,y=ypos)
+        entry_distance = tk.Entry(gui, textvariable=cell_distance_var)
+        entry_distance.grid(row=0, sticky=tk.W)
+        entry_distance.place(x=200,y=ypos,width=90)
+    else:
+        cell_distance_var = tk.IntVar(value=None)
+    
     
     # CREATE BUTTONS ##########################################################
-    ypos = ypos + 30
+    ypos = ypos + 50
     B_continue = tk.Button(gui, text='Continue', command=gui.destroy, bg="green")
     B_continue.grid(row=2, sticky=tk.W, pady=4)
     B_continue.place(x=10,y=ypos)
     
-    B_preview = tk.Button(gui, text='Preview', command=lambda:preview_segmentation(model, fused, divide_in_patches_var.get(), diameter_var.get(), 
+    B_preview = tk.Button(gui, text='Preview', command=lambda:preview_segmentation(model, preview_images, divide_in_patches, diameter_var.get(), 
                                                                                    patch_height.get(), patch_width.get(),cyto_ch_str.get(),nucleo_ch_str.get(),
                                                                                    minimal_cell_size.get(), cell_distance_var.get(), predict_network), bg="yellow")
     B_preview.grid(row=2, sticky=tk.W, pady=4)
@@ -568,7 +601,7 @@ def choose_cellpose_parameters_with_gui(model,fused,predict_network=True):
     
     # Get parameters as a string (to save metadata file)
     metadata = ""
-    metadata = metadata + "DivideInPatches = " + str(divide_in_patches_var.get()) + "\n"
+    metadata = metadata + "DivideInPatches = " + str(divide_in_patches) + "\n"
     metadata = metadata + "CellposePatchWidth = " + str(patch_width.get()) + "\n"
     metadata = metadata + "CellposePatchHeight = " + str(patch_height.get()) + "\n"
     metadata = metadata + "CellposeModel = " + model + "\n"
@@ -580,7 +613,7 @@ def choose_cellpose_parameters_with_gui(model,fused,predict_network=True):
     metadata = metadata + "CellposeDiameter = " + str(diameter_var.get()) + "\n"
     metadata = metadata + "NumberOfCpuCores = " + str(num_cpu_cores) + "\n"
     
-    return [divide_in_patches_var.get(), patch_width.get(), patch_height.get(), edge_thickness.get(),
+    return [patch_width.get(), patch_height.get(), edge_thickness.get(),
             similarity_threshold.get(), cell_distance_var.get(), 
             minimal_cell_size.get(), channels,
             diameter_var.get(), num_cpu_cores, metadata]
