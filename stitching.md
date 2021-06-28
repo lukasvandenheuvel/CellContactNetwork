@@ -10,6 +10,12 @@ To make the process automated, you can use the Fiji macros ```1_PrepareTilesMIST
 
 ---
 
+---
+
+:warning: If you encounter unexpected errors, see the **Frequently occurring errors** section all the way down this page.
+
+---
+
 ## 1. Prepare tiles with the macro ```1_PrepareTilesMIST.ijm```.
 
 ### Input  
@@ -121,3 +127,15 @@ The macro ```2_stitchMIST.ijm``` will do these steps automatically for you.
 <p align="center">
   <img src="./assets/img/MISTdialog.png">
 </p>
+
+## Frequently occurring errors
+
+```There are no images open in line xxx```  
+
+<p align="center">
+  <img src="./assets/img/MISTprepareTilesErrorNoImagesOpen.PNG">
+</p>  
+
+This error implies that Fiji succeeded in finding an image with the correct filename, but it cannot open it.  
+Fix: Check the **file sizes** of your input images. Presumably, there is/are image(s) with file sizes that deviate from the other images in the well folder. That means something went wrong with the export of images from the HCA! Export the images again, or (if the image is not important because it was at the edge of the well anyway) you can overwrite the wrongly exported image with a black image with the correct dimensions and the same filename.  
+
