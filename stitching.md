@@ -12,7 +12,7 @@ To make the process automated, you can use the Fiji macros ```1_PrepareTilesMIST
 
 ---
 
-:warning: If you encounter unexpected errors, see the **Frequently occurring errors** section all the way down this page.
+:warning: If you encounter unexpected errors, see the **Frequently occurring errors** section all the way at the bottom of this page.
 
 ---
 
