@@ -32,7 +32,9 @@ function [TL,I, background, foreground, meanI] = load_timelapse_and_intensity_le
     % Get number of timepoints in timelapse and number of cells
     info = imfinfo(path_to_timelapse);
     num_timepoints = length(info);
-    num_cells = max(segmentation(:));
+    cell_labels = unique(segmentation);
+    cell_labels(cell_labels==0) = []; % Remove 0 (= background)
+    num_cells = length(cell_labels);
     
     % Get background and foreground masks
     background_mask = logical(1-(segmentation>0));
@@ -53,7 +55,8 @@ function [TL,I, background, foreground, meanI] = load_timelapse_and_intensity_le
     for t=1:num_timepoints
         frame = imread(path_to_timelapse,t);
         stats = regionprops(segmentation,frame,'MeanIntensity');
-        I(:,t) = [stats.MeanIntensity]';
+        intensities = [stats.MeanIntensity]';
+        I(:,t) = intensities(cell_labels)';
         background(t) = mean2(frame(background_mask));
         foreground(t) = mean2(frame(foreground_mask));
         meanI(t) = mean2(frame);

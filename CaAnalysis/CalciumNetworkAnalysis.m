@@ -64,7 +64,7 @@ plot(meanI)
 legend('Background', 'Foreground', 'meanI')
 
 %% Find peaks and valleys
-min_peak_prominence = 0.1;
+min_peak_prominence = 0.05;
 [peaks, peak_locs, valleys, valley_locs, num_peaks] = ...
                                 find_peaks_and_valleys(deltaI, min_peak_prominence);
 

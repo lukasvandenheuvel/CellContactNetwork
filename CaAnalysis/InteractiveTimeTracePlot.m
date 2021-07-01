@@ -47,7 +47,7 @@ imshow(segmented_rgb)
 normI = (I - background) ./ background;
 
 %% Peak finder
-min_peak_prominence = 0.1;
+min_peak_prominence = 0.05;
 min_peak_width = 0;
 [peaks, peak_locs, valleys, valley_locs, num_peaks] = ...
                                 find_peaks_and_valleys(normI, min_peak_prominence, min_peak_width);
@@ -175,6 +175,27 @@ while button == 1 % stop while loop if the user clicked the right mouse (this wi
     ylabel('Fluo-8 (relative to mean)')
 end
 
+%%
+max_time_point = 90;
+max_time = round(sampling_rate * max_time_point);
+I1 = normI(870,1:max_time);
+I2 = normI(893,1:max_time);
+
+green = [124,252,0] / 255;
+
+figure()
+plot(time(1:max_time),I1,'c', 'LineWidth', 2)
+hold on
+plot(time(1:max_time),I2, 'Color', green, 'LineWidth', 2)
+ylim([0,1.3])
+
+xlabel('Time (s)')
+ylabel('Ca^{2+} level (a.u.)')
+legend('Cell 1', 'Cell 2')
+set(gca, 'LineWidth', 1,'FontSize',12)
+set(gcf,'Color','w','Units','inches','Position',[9 1 10 2])
+saveas(gcf,fullfile(directory, 'CaImaging.png'))
+
 %% Functions
 function [boundary, ymax, ymin] = get_cell_specifics(cell_nr, normI, segmented, max_frame_nr)
 
@@ -186,8 +207,3 @@ function [boundary, ymax, ymin] = get_cell_specifics(cell_nr, normI, segmented, 
     
 end
 %%
-function time_axis = get_time_axis(I, sampling_frequency)
-    num_timepoints = size(I,2);
-    total_time = num_timepoints / sampling_frequency;
-    time_axis = linspace(0, total_time, num_timepoints);
-end
