@@ -22,6 +22,9 @@ Follow these instructions to install [Cellpose](https://www.cellpose.org/) on yo
 - Clone or download the [repository](https://github.com/lukasvandenheuvel/CellContactNetwork).
 - Open the Anaconda Prompt application.
 - Navigate to the folder where the ```environment.yml``` file is stored with ```cd path/to/folder```. To move to the M-drive, press ```M:``` and enter.
+
+![](./assets/gif/AnacondaPromptCD.gif)
+
 - Run ```conda env create -f environment.yml```.
 - When all packages are installed, activate the cell-contact-network environment with ```conda activate ccn```.
 - You should see (```ccn```) on the left side of the terminal line.
