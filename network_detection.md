@@ -12,7 +12,7 @@ If the input image is large, the segmentation will be done on smaller patches, a
 - Activate the cellpose environment with ```conda activate ccn```.
 - Navigate to the NetworkDetection folder of your local clone of this repository with ```cd path/to/NetworkDetection```. To move to the M-drive, type ```M:``` and press enter.
   
-  ![](./assets/gif/StartFindNetworkCellpose.gif)
+  ![](./assets/gif/RunFindNetworkCellpose.gif)
   
 - Run ```python FindNetworkCellpose.py```. After a short while, you will be asked the following three questions:  
 
