@@ -5,6 +5,7 @@
 #@ int (label="Timelapse channel") ch
 #@ int (label="DAPI channel") ch_dapi
 #@ int (label="SIR-Actin channel") ch_actin
+#@ boolean (label="Do you want to align timeframes using StackReg?") stackreg
 #@ String (label="Name of timelapse channel") ch_name
 #@ String (label="Agonist added") agonist
 #@ String (label="Concentration in uM") conc_str
@@ -101,8 +102,14 @@ if (save_metadata) {
 // Load and save image sequence
 print(">>>> Loading image sequence ...");
 run("Image Sequence...", "open="+first_file_path+" file=d"+d2s(ch,0)+" sort");
-run("Green");
+//run("Green");
 rename("Timelapse");
+// Align timeframes
+if (stackreg) {
+	print(">>>> Performing stack registration ...");
+	setSlice(1);
+	run("StackReg", "transformation=Translation");
+}
 
 print(">>>> Saving image sequence ...");
 saveAs("Tiff", timelapse_path);

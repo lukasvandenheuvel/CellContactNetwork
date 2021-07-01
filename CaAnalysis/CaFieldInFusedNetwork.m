@@ -15,7 +15,7 @@ rgb_fused_path = fullfile(directory, rgb_fused_file);
 [network_file, directory] = uigetfile('.mat','Choose FUSED network file',directory); 
 network_path = fullfile(directory, network_file);
 % Alignment file (tile in fused)
-[alignment_file, directory] = uigetfile('.txt','Choose alignment file',directory); 
+[alignment_file, directory] = uigetfile('.txt','Choose .txt file with alignment results',directory); 
 alignment_path = fullfile(directory, alignment_file);
 % Timelapse
 [timelapse_file, directory] = uigetfile({'*.tif';'*.png'}, 'Choose the timelapse file', directory);
@@ -26,11 +26,14 @@ rgb_tile_path = fullfile(directory, rgb_tile_file);
 
 %% Choose frame rate
 sampling_rate = input('Enter frame rate in Hz: ');
+min_peak_prominence = input('Enter minimal peak prominence: ');
+width_t = input('Enter width / height of the field in um : ');
 
 %% Load images
 disp('Loading images...')
 segmentation = imread(segmented_path);
 rgb_tile = imread(rgb_tile_path);
+[N_t,M_t] = size(rgb_tile);
 rgb_fused = imread(rgb_fused_path);
 [N,M] = size(rgb_fused);
 
@@ -40,7 +43,7 @@ network = load(network_path);
 G = graph(network.contact_matrix);
 x_nodes = network.centroid1;            % x-coordinates of centers of mass 
 y_nodes = network.centroid0;            % y-centers of mass measured from the origin
-pix_to_um = 6300/length(segmentation); 	% number of micrometers per pixel
+pix_to_um = width_t/N_t;                % number of micrometers per pixel
 area = network.area * pix_to_um^2;      % area in um^2
 num_nodes = numnodes(G);
 
@@ -65,7 +68,6 @@ time = get_time_axis(I, sampling_rate);
 normI = (I - background) ./ background;
 
 % Peak finder (Ca2+ peaks)
-min_peak_prominence = 0.1;
 min_peak_width = 0;
 [peaks, peak_locs, valleys, valley_locs, num_peaks] = ...
                                 find_peaks_and_valleys(normI, min_peak_prominence, min_peak_width);
@@ -75,6 +77,9 @@ min_peak_width = 0;
 % find spiking cells and normalize their intensity
 max_frame_nr = size(I,2);
 spiking_cells = (num_peaks > 3);
+if sum(spiking_cells) < 2 % if less than 2 cells spike
+    error('Less than 2 cells were found to oscillate! Cannot perform any analysis.')
+end
 I_spiking = normI(spiking_cells, 1:max_frame_nr);
 I_spiking_norm = zeros(size(I_spiking));
 for i = 1:sum(spiking_cells)
@@ -84,7 +89,6 @@ for i = 1:sum(spiking_cells)
 end
 
 % Order spiking cells in dendrogram, based on Graph distance :
-
 % Make distance matrix for spiking cells
 D = distances(Gt);
 D_spiking = D(spiking_cells, spiking_cells);
@@ -96,6 +100,7 @@ tree = linkage(D_vector,'single');
 %% Graph-theoretical analysis
 
 % Betweenness centrality
+disp('Calculating betweenness ...')
 bc = 2*centrality(G,'betweenness')/((num_nodes-1)*(num_nodes-2));
 bc_t = bc(nodes_in_tile);
 

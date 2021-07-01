@@ -10,13 +10,14 @@ intial_path = 'M:\tnw\bn\dm\Shared';
 % Choose data
 [timelapse_file, directory] = uigetfile({'*.tif';'*.png'}, 'Choose the timelapse file', intial_path);
 timelapse_path = fullfile(directory, timelapse_file);
-segmented_file = uigetfile({'*.tif';'*.png'}, 'Choose the segmented image', directory);
+segmented_file = uigetfile({'*.tif';'*.png'}, 'Choose the tile segmented image', directory);
 segmented_path = fullfile(directory, segmented_file);
-network_file = uigetfile({'*.mat'}, 'Choose the network measurements file', directory);
+network_file = uigetfile({'*.mat'}, 'Choose the tile network measurements file', directory);
 network_path = fullfile(directory, network_file);
 
 %% Choose frame rate
 sampling_rate = input('Enter frame rate in Hz: ');
+min_peak_prominence = input('Enter a peak prominence: ');
 
 % Load segmentation file
 segmentation = imread(segmented_path);
@@ -47,7 +48,6 @@ imshow(segmented_rgb)
 normI = (I - background) ./ background;
 
 %% Peak finder
-min_peak_prominence = 0.05;
 min_peak_width = 0;
 [peaks, peak_locs, valleys, valley_locs, num_peaks] = ...
                                 find_peaks_and_valleys(normI, min_peak_prominence, min_peak_width);

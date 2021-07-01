@@ -22,9 +22,9 @@ function number_to_string(nr, min_length){
 }
 
 #@ File (label="Fused Image (RGB)") path_to_fused
-#@ File (label="Tile") path_to_tile
+#@ File (label="Tile Image (RGB)") path_to_tile
 #@ String (label="Well") well
-#@ int (label="Tile Number") tile_nr
+#@ int (label="Tile Number (in spiral grid)") tile_nr
 
 close("*");
 root = File.getParent(path_to_fused);
