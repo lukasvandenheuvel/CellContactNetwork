@@ -17,6 +17,8 @@ This work was done at the Dimphna Meijer Lab of Quantitative Neurobiology, Facul
 
 ## [Network Analysis](network_analysis.md)  
 
+## [Calcium Imaging Analysis](ca_analysis.md)
+
 ## [Train a Cellpose Model](train_cellpose.md)  
 
 <!---
