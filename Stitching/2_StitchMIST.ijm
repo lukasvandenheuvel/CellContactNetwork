@@ -402,7 +402,10 @@ roiManager("Add");
 
 // Crop image
 run("Crop");
-run("Clear Outside");
+// If there still is a (circular) selection left, clear the outside
+if (!(getInfo("selection.name")=="")){
+	run("Clear Outside");
+}
 
 // Save result (both as seperate channels and as RGB color) --------------------------------
 print("Saving the result...");

@@ -76,6 +76,7 @@ dependencies:
   - zfp=0.5.5
   - zlib=1.2.11
   - zstd=1.4.5
+  - pip
   - pip:
     - cachetools==4.2.2
     - cellpose==0.6.5

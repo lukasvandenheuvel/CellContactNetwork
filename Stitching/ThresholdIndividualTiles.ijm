@@ -431,6 +431,7 @@ file_list = getFileList(inputFolder);
 file0 = file_list[0];
 
 threshold_method_list = split(threshold_methods, ",");
+close("*");
 
 // Loop over the tiles you want to threshold.
 for(i = 0; i < img_nrs.length; i++){

@@ -700,7 +700,9 @@ for (l = 0; l < well_list.length; l++) {
 
 			// Downsize if the user asked for it
 			if(downscale_factor != 1){
-				getDimensions(width, height, channels, slices, frames);
+				width = getWidth();
+				height = getHeight();
+				//getDimensions(width,height,channels,slices,frames);
 				newWidth = d2s( round(width / downscale_factor), 0 );
 				newHeight = d2s( round(height / downscale_factor), 0 );
 				run("Size...", "width="+newWidth+" height="+newHeight+" depth=1 constrain average interpolation=Bilinear");

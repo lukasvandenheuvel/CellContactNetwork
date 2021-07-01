@@ -242,24 +242,26 @@ nucleus_channel = 'B'    # choose 'R', 'G', or 'B' or 'None'
 batch_size = 4
 n_epochs = 7000
 weight_decay = 0.00001
-num_augmentations_per_image = 2
+num_augmentations_per_image = 3
 
 # Specifications of the pretrained model --------------------------------------
 path_to_pretrained_model = None # Path to the pretrained model file (example: './models/cellpose_residual_on_style_on_concatenation_off_Cellpose_2021_05_04.236206'). Set to None if you want to train from scratch.
 
 # Path to images and annotations ----------------------------------------------
-train_path = './data/train/ais/image'
-label_path = './data/train/ais/label'
+train_path = './data/train/glioblastoma/image'
+label_path = './data/train/glioblastoma/label'
 
 # Path to specialized dataset -------------------------------------------------
-specialised_train_path = './data/train/neuroblastoma/image' # Set to None if you don't want to use a specialized dataset
-specialised_label_path = './data/train/neuroblastoma/label' # Set to None if you don't want to use a specialized dataset
+#specialised_train_path = './data/train/neuroblastoma/image' # Set to None if you don't want to use a specialized dataset
+#specialised_label_path = './data/train/neuroblastoma/label' # Set to None if you don't want to use a specialized dataset
+specialised_train_path = None
+specialised_label_path = None
 
 # Path to test images ---------------------------------------------------------
-test_path = './data/test/image'              # Set to None if you don't have test images
+test_path = './data/test/glioblastoma/image'              # Set to None if you don't have test images
 
 # Output path -----------------------------------------------------------------
-prediction_path = './data/test/image'        # where the predicted test images will be saved (only used if test_path is not None)
+prediction_path = './data/test/glioblastoma/image'        # where the predicted test images will be saved (only used if test_path is not None)
 save_path = './'                             # where the model parameters will be saved
 
 #%% Load model with pretrained weights ---------------------------------------
@@ -293,7 +295,7 @@ for i in range(5):
     label = train_labels[nr]
     ax[0,i].imshow(img)
     ax[1,i].imshow(label)
-f.show()
+plt.savefig('TrainingImages.png')
 
 #%% Train model ---------------------------------------------------------------
 channels = find_channels('custom', channel_to_segment, nucleus_channel)
