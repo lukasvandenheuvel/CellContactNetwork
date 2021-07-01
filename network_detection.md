@@ -115,3 +115,18 @@ Once you click ```Continue```, the script will read the images you selected (if 
 ---
 
 - Once the script finished running (you can see the progress in the Anaconda Prompt),you are ready to [analyze the network measurements](network_analysis.md).
+
+## Get segmentations as ROIs in Fiji (optional, for visualization)
+
+- Open ```Input_cellpose_segmentation_cyto.tif``` in Fiji.
+- Set a threshold on the segmentation with [Image > Adjust > Threshold...]. Make sure the "Dark background" option is checked.
+- Press "Set". For the lower threshold level, choose ```1```. For the upper threshold level, choose ```1E30```. Press "OK", and then "Apply".
+- Choose "Convert to mask".
+- Go to [Analyze > Analyze particles]. Select the "Add to manager" option and press OK.
+- Open ```Input.tif```.
+- Grab the ROImanager window, and select "Show all". You should now see the ROIs as overlay on ```Input.tif```.
+
+  <p align="center">
+    <img width="500" src="assets/img/FijiRois.png ">
+  </p>
+
