@@ -1,4 +1,4 @@
-Back to [main page](index.md)
+[Home](index.md)
 
 ---
 
@@ -35,4 +35,4 @@ Follow these instructions to install [Cellpose](https://www.cellpose.org/) on yo
 - Run ```python -m cellpose``` to start up the Cellpose GUI. If it works, you're all set and you can start [detecting multicellular networks](network_detection.md).  
 
 ---
-Back to [main page](index.md)
+[Home](index.md)
