@@ -1,4 +1,4 @@
-Back to [main page](index.md)
+[Home](index.md)
 
 ---
 
@@ -37,4 +37,4 @@ The script [```GraphPlot.m```](https://github.com/lukasvandenheuvel/CellContactN
 </p>  
 
 ---
-Back to [main page](index.md)
+[Home](index.md)
