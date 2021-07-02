@@ -1,4 +1,4 @@
-Back to [main page](index.md)
+[Home](index.md)
 
 ---
 
@@ -81,4 +81,4 @@ Lastly, we use a Matlab script to combine the Ca2+ activity analysis to the soci
 - This script serves as a template. You can modify it s.t. it outputs your parameter of interest.  
    
 ---
-Back to [main page](index.md)
+[Home](index.md)
