@@ -1,3 +1,7 @@
+[Home](index.md)
+
+---
+
 # Train Cellpose
 
 If the Cellpose ```cyto``` or ```nuclei``` models perform poorly on your type of microscopy images, you might consider training Cellpose yourself with hand-annotated data.  
@@ -59,4 +63,9 @@ We downloaded this dataset, gave every cell a unique label, and stored the micro
 
 - A second file ```Cellpose/models/cellpose_residual_on_style_on_concatentation_off_Cellpose_2021_04_training_details.csv``` will be stored. This file contains a summary of the training parameters.
 - Use the script [```EvaluateCellpose.py```](https://github.com/lukasvandenheuvel/CellContactNetwork/blob/main/Cellpose/EvaluateCellpose.py) if you want to compare the performance of multiple trained models. To run this script, you will need a set of test images (which are different from the training images) stored in ```Cellpose/data/test/image``` with corresponding labels in ```Cellpose/data/test/label```. The filenames should be like those in the training set, i.e. ```001.tif```, ```002.tif```, etc. for images and ```001.png```, ```002.png``` for corresponding labels.
-- Once you are happy with the model, store it in a seperate folder and [use it as self-trained model](https://lukasvandenheuvel.github.io/CellContactNetwork/network_detection.html).
+- Once you are happy with the model, store it in a seperate folder and [use it as self-trained model](https://lukasvandenheuvel.github.io/CellContactNetwork/network_detection.html).  
+
+  
+  
+---
+[Home](index.md)
