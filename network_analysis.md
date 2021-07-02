@@ -1,3 +1,7 @@
+Back to [main page](index.md)
+
+---
+
 After you [detected a network](network_detection.md), you can read the measurement results in a Matlab datastructure array using the following Matlab command:  
 ```matlab
 network = load('path/to/<input_name>_network_<model_name>.mat');
@@ -30,4 +34,7 @@ The script [```GraphPlot.m```](https://github.com/lukasvandenheuvel/CellContactN
 
 <p align="center">
   <img src="./assets/img/MatlabAnalysis.PNG">
-</p>
+</p>  
+
+---
+Back to [main page](index.md)
