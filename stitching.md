@@ -1,3 +1,7 @@
+[Home](index.md)
+
+---
+
 # Stitch High-Content Images
 
 Stitching tiles into a fused image is done with [MIST](https://pages.nist.gov/MIST/), which was developed by the U.S. National Institute of Standards and Technology.
@@ -137,5 +141,8 @@ The macro ```2_stitchMIST.ijm``` will do these steps automatically for you.
 </p>  
 
 This error implies that Fiji succeeded in finding an image with the correct filename, but it cannot open it.  
-Fix: Check the **file sizes** of your input images. Presumably, there is/are image(s) with file sizes that deviate from the other images in the well folder. That means something went wrong with the export of images from the HCA! Export the images again, or (if the image is not important because it was at the edge of the well anyway) you can overwrite the wrongly exported image with a black image with the correct dimensions and the same filename.  
+Fix: Check the **file sizes** of your input images. Presumably, there is/are image(s) with file sizes that deviate from the other images in the well folder. That means something went wrong with the export of images from the HCA! Export the images again, or (if the image is not important because it was at the edge of the well anyway) you can overwrite the wrongly exported image with a black image with the correct dimensions and the same filename.   
+
+---
+[Home](index.md)
 
