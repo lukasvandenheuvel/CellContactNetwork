@@ -1,3 +1,7 @@
+[Home](index.md)
+
+---
+
 # Detect Multicellular Networks
 
 The script [```FindNetworkCellpose.py```](https://github.com/lukasvandenheuvel/CellContactNetwork/blob/main/NetworkDetection/FindNetworkCellpose.py) segments cells on a microscopy image (grayscale or RGB) using Cellpose, and finds the corresponding cellular contact network. The script takes as input one or several TIFF or PNG microscopy image(s) and outputs 3 files per image. The filenames in the list below are example filenames where the input image is called ```Input.tif``` and the model type is ```cyto```.
@@ -131,5 +135,8 @@ Once you click ```Continue```, the script will read the images you selected (if 
 
   <p align="center">
     <img width="500" src="assets/img/FijiRois.png ">
-  </p>
+  </p>  
 
+
+---
+[Home](index.md)
